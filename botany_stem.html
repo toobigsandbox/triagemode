@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Botanical Blueprint: Complete Stem System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Outfit:wght@300;400;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+        :root {
+            --bg-color: #f0f9ff;
+            --grid-color: rgba(14, 165, 233, 0.1);
+            --teal: #0d9488;
+            --orange: #f97316;
+            --indigo: #6366f1;
+            --rose: #e11d48;
+            --slate: #334155;
+            --brown: #78350f;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: var(--slate);
+            min-height: 100vh;
+        }
+
+        .serif { font-family: 'Lora', serif; }
+        .handwritten { font-family: 'Fredoka', sans-serif; }
+
+        /* The Expanding Grid System */
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .lab-card {
+            /* Default: Square-ish Card in a Grid */
+            width: 100%;
+            background: white;
+            border: 2px solid white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .lab-card {
+                width: calc(50% - 0.75rem); /* 2 Columns */
+            }
+        }
+
+        /* Active State: Full Width Rectangle */
+        .lab-card.active {
+            width: 100%;
+            border-color: var(--teal);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            cursor: default;
+        }
+
+        /* Content Visibility */
+        .card-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .lab-card.active .card-content {
+            max-height: 2000px;
+            opacity: 1;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        /* Hover Effects for Inactive Cards */
+        .lab-card:not(.active):hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Simulation Mode (Dark) */
+        .sim-chamber {
+            background: radial-gradient(circle at center, #1e293b, #0f172a);
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.5);
+            border: 2px solid #334155;
+        }
+
+        /* Specimen Cards (Inner) */
+        .specimen-mini {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+        .specimen-mini:hover {
+            transform: translateY(-2px);
+            border-color: var(--teal);
+        }
+
+        /* Sticky Notes */
+        .sticky-note {
+            background: #fef9c3;
+            box-shadow: 3px 3px 10px rgba(0,0,0,0.1);
+            transform: rotate(-1deg);
+            transition: transform 0.2s;
+        }
+        .sticky-note:hover { transform: rotate(0deg) scale(1.05) translateY(-5px); z-index: 20; }
+        
+        /* Vein Animation */
+        @keyframes flowUp {
+            0% { stroke-dashoffset: 20; opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { stroke-dashoffset: 0; opacity: 0.3; }
+        }
+        .xylem-flow {
+            stroke-dasharray: 4;
+            animation: flowUp 1s linear infinite;
+        }
+
+        .expand-icon {
+            transition: transform 0.4s ease;
+        }
+        .lab-card.active .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        /* Technical Term Highlight */
+        .tech-term {
+            color: #0f172a;
+            font-weight: 700;
+            background: linear-gradient(120deg, rgba(13, 148, 136, 0.2) 0%, rgba(13, 148, 136, 0.1) 100%);
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="pb-24">
+
+    <!-- HEADER: THE HOOK -->
+    <header class="pt-12 pb-8 px-6 max-w-5xl mx-auto">
+        <div class="flex flex-col md:flex-row items-start gap-8">
+            <div class="flex-1">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+                    <i class="fa-solid fa-leaf"></i> Botany • The Stem
+                </div>
+                <h1 class="text-5xl md:text-6xl font-extrabold text-slate-800 tracking-tight leading-none mb-6">
+                    The Plant's <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-sky-500">Vascular System</span>
+                </h1>
+                <p class="text-xl text-slate-500 serif italic leading-relaxed mb-6">
+                    "It has the command to grow Up. It is the structural pillar, the hydraulic pump, and the chemical pantry."
+                </p>
+                <button onclick="scrollToId('sim-section')" class="bg-slate-800 text-white px-6 py-2 rounded-lg font-bold text-sm hover:bg-slate-700 transition-colors shadow-lg shadow-slate-300/50">
+                    <i class="fa-solid fa-eye mr-2"></i>Enter Simulation Mode
+                </button>
+            </div>
+            
+            <!-- THE THEORY SIDEBAR -->
+            <div class="w-full md:w-72 bg-white p-5 rounded-2xl border-l-4 border-amber-400 shadow-sm rotate-1 hover:rotate-0 transition-transform cursor-help group">
+                <div class="flex items-center gap-2 mb-2 text-amber-600 font-bold text-xs uppercase tracking-widest">
+                    <i class="fa-solid fa-lightbulb"></i> The Method
+                </div>
+                <h3 class="font-serif font-bold text-lg text-slate-800 mb-2">"Materialized Abstraction"</h3>
+                <p class="text-sm text-slate-600 leading-snug mb-3">
+                    We use the <strong>Isolation of a Quality</strong> (Red Dye) to make the invisible vascular flow visible for the 2nd Plane child.
+                </p>
+                <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider group-hover:text-amber-500 transition-colors">
+                    Bruner • Piaget • Montessori
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION: THE VISUALIZER (Sim Mode) -->
+    <section id="sim-section" class="px-6 mb-16 max-w-5xl mx-auto">
+        <div class="sim-chamber rounded-3xl p-8 text-white relative overflow-hidden flex flex-col md:flex-row gap-8 items-center transform transition-all hover:scale-[1.01]">
+            
+            <div class="flex-1 space-y-6 relative z-10">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-2 h-2 bg-rose-500 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-mono text-teal-400 uppercase tracking-widest">Sensory Feed</span>
+                </div>
+                <p class="text-lg font-light leading-relaxed">
+                    The room is dim. The only sound is the <span class="text-teal-300 font-bold">*crunch*</span> of the knife slicing the celery base.
+                </p>
+                <p class="text-lg font-light leading-relaxed">
+                    The water is dyed a violent <span class="text-rose-400 font-bold">Crimson Red</span>. We place the stalk. We wait for the capillary action to begin.
+                </p>
+                
+                <div class="flex gap-4 mt-4">
+                    <div class="bg-slate-800/50 px-4 py-2 rounded border border-slate-700 flex flex-col items-center">
+                        <span class="text-teal-300 font-bold text-lg"><i class="fa-solid fa-arrow-up"></i></span>
+                        <span class="text-[10px] text-slate-400 uppercase">Xylem</span>
+                    </div>
+                    <div class="bg-slate-800/50 px-4 py-2 rounded border border-slate-700 flex flex-col items-center">
+                        <span class="text-rose-300 font-bold text-lg"><i class="fa-solid fa-arrow-down"></i></span>
+                        <span class="text-[10px] text-slate-400 uppercase">Phloem</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SVG Visual -->
+            <div class="w-40 h-56 relative opacity-90 shrink-0">
+                <svg viewBox="0 0 100 200" class="w-full h-full drop-shadow-[0_0_15px_rgba(225,29,72,0.3)]">
+                    <path d="M40,200 Q30,100 40,0 L60,0 Q70,100 60,200 Z" fill="#14532d" stroke="#166534" stroke-width="2"/>
+                    <path d="M45,200 L45,0" stroke="#f43f5e" stroke-width="4" class="xylem-flow" stroke-linecap="round"/>
+                    <path d="M55,200 L55,0" stroke="#f43f5e" stroke-width="4" class="xylem-flow" style="animation-delay: 0.5s;" stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION: THE GRID STACK -->
+    <main class="max-w-5xl mx-auto px-6">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-teal-500"></i> The Discovery Deck
+            <span class="text-sm font-normal text-slate-400 ml-2">(Click a tile to expand)</span>
+        </h2>
+
+        <div class="card-container">
+
+            <!-- CARD 1: VARIETIES -->
+            <div class="lab-card group" onclick="toggleCard(this)">
+                <div class="p-6 flex flex-col h-full relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-brown-100 text-brown-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-shapes"></i>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-brown-600 transition-colors">Specimen Gallery</h3>
+                    <p class="text-sm text-slate-500">From Subterranean Storage to Parasitic Adaptation.</p>
+                    
+                    <!-- HIDDEN CONTENT -->
+                    <div class="card-content">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                            <!-- Items -->
+                            <div class="specimen-mini p-4 bg-amber-50/50">
+                                <div class="text-3xl mb-2">🥔</div>
+                                <h4 class="font-bold text-slate-800 text-sm">Tuber</h4>
+                                <p class="text-xs text-slate-500 italic">Potato</p>
+                                <p class="text-xs text-slate-600 mt-1">Subterranean stem thickened for nutrient storage.</p>
+                            </div>
+                            <div class="specimen-mini p-4 bg-amber-50/50">
+                                <div class="text-3xl mb-2">🧅</div>
+                                <h4 class="font-bold text-slate-800 text-sm">Bulb</h4>
+                                <p class="text-xs text-slate-500 italic">Onion, Tulip</p>
+                                <p class="text-xs text-slate-600 mt-1">Short stem with fleshy scale leaves.</p>
+                            </div>
+                            <div class="specimen-mini p-4 bg-amber-50/50">
+                                <div class="text-3xl mb-2">🫚</div>
+                                <h4 class="font-bold text-slate-800 text-sm">Rhizome</h4>
+                                <p class="text-xs text-slate-500 italic">Ginger, Iris</p>
+                                <p class="text-xs text-slate-600 mt-1">Horizontal subterranean stem; sends out roots.</p>
+                            </div>
+                            <div class="specimen-mini p-4 bg-green-50/50">
+                                <div class="text-3xl mb-2">🍓</div>
+                                <h4 class="font-bold text-slate-800 text-sm">Procumbent</h4>
+                                <p class="text-xs text-slate-500 italic">Strawberry</p>
+                                <p class="text-xs text-slate-600 mt-1">Trails along ground; produces adventitious roots.</p>
+                            </div>
+                            <div class="specimen-mini p-4 bg-green-50/50">
+                                <div class="text-3xl mb-2">🍇</div>
+                                <h4 class="font-bold text-slate-800 text-sm">Tendrils</h4>
+                                <p class="text-xs text-slate-500 italic">Grapevine</p>
+                                <p class="text-xs text-slate-600 mt-1">Thigmotropic adaptation for climbing.</p>
+                            </div>
+                            <div class="specimen-mini p-4 bg-red-50/50 border-red-100">
+                                <div class="text-3xl mb-2">🧛</div>
+                                <h4 class="font-bold text-red-800 text-sm">Parasitic</h4>
+                                <p class="text-xs text-red-500 italic">Mistletoe, Dodder</p>
+                                <p class="text-xs text-slate-600 mt-1">Draws nutrients directly from host xylem/phloem.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: MECHANISM -->
+            <div class="lab-card group" onclick="toggleCard(this)">
+                <div class="p-6 flex flex-col h-full relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-microscope"></i>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-teal-600 transition-colors">Vascular Transport</h3>
+                    <p class="text-sm text-slate-500">Cohesion-Tension Theory & Capillarity.</p>
+
+                    <!-- HIDDEN CONTENT -->
+                    <div class="card-content">
+                        <div class="space-y-4 mt-4 max-w-3xl">
+                            <div class="flex gap-4 items-start">
+                                <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm shrink-0">1</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-700">Root Pressure (Osmotic Push)</h4>
+                                    <p class="text-slate-600 text-sm leading-relaxed mt-1">Active transport of ions into roots creates osmotic pressure, forcing water up (Guttation).</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm shrink-0">2</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-700">Transpiration-Cohesion-Tension</h4>
+                                    <p class="text-slate-600 text-sm leading-relaxed mt-1">Evaporation from stomata creates negative pressure (tension). This "pulls" the continuous water column upward.</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-4 items-start">
+                                <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-600 flex items-center justify-center font-bold text-sm shrink-0">3</div>
+                                <div>
+                                    <h4 class="font-bold text-slate-700">Cohesion & Adhesion</h4>
+                                    <p class="text-slate-600 text-sm leading-relaxed mt-1">
+                                        <span class="tech-term">Cohesion:</span> Hydrogen bonding holds water molecules together.<br>
+                                        <span class="tech-term">Adhesion:</span> Water clings to the cellulose walls of the Xylem (Capillarity).
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-teal-50 border border-teal-100 rounded-lg text-sm text-teal-800 italic mt-4">
+                                "Water rises in the stem via the same physical laws as it rises in the capillary tubes of the tissue paper."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: ANATOMY -->
+            <div class="lab-card group" onclick="toggleCard(this)">
+                <div class="p-6 flex flex-col h-full relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-layer-group"></i>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-orange-600 transition-colors">Anatomy & Lignification</h3>
+                    <p class="text-sm text-slate-500">Woody vs. Herbaceous Structures.</p>
+
+                    <!-- HIDDEN CONTENT -->
+                    <div class="card-content">
+                        <div class="grid md:grid-cols-2 gap-6 mt-4">
+                            <div class="p-4 bg-green-50 rounded-xl border border-green-100">
+                                <h4 class="font-bold text-green-800 mb-2">Herbaceous</h4>
+                                <p class="text-xs text-green-900 mb-2 font-mono uppercase">Latin: Herb (Grass)</p>
+                                <ul class="text-sm text-green-800 list-disc list-inside space-y-1">
+                                    <li>Succulent & Green</li>
+                                    <li>Minimal Secondary Growth</li>
+                                    <li>Non-Lignified (Soft)</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-amber-50 rounded-xl border border-amber-100">
+                                <h4 class="font-bold text-amber-900 mb-2">Woody</h4>
+                                <p class="text-xs text-amber-900 mb-2 font-mono uppercase">Latin: Lignum (Wood)</p>
+                                <ul class="text-sm text-amber-900 list-disc list-inside space-y-1">
+                                    <li>Lignified Cells (Hard)</li>
+                                    <li>Protected by Bark (Periderm)</li>
+                                    <li>Extensive Secondary Growth</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-4 mt-4">
+                            <h4 class="font-bold text-slate-800 mb-2">The Vascular Cambium</h4>
+                            <p class="text-sm text-slate-600 leading-relaxed">
+                                The generative layer. It produces secondary Xylem (Wood) inward and secondary Phloem (Inner Bark) outward. The dead, lignified xylem in the center becomes the structural heartwood.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4: PSYCHOLOGY -->
+            <div class="lab-card group" onclick="toggleCard(this)">
+                <div class="p-6 flex flex-col h-full relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-indigo-600 transition-colors">The 2nd Plane Mind</h3>
+                    <p class="text-sm text-slate-500">Constructive Imagination & Abstract Models.</p>
+
+                    <!-- HIDDEN CONTENT -->
+                    <div class="card-content">
+                        <p class="text-indigo-500 font-serif italic mb-6 text-center mt-4">"Help me to think by myself."</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-indigo-50 p-4 rounded-xl">
+                                <h4 class="font-bold text-slate-700 text-sm mb-2">Intellectual Imagination</h4>
+                                <p class="text-slate-600 text-xs">The child cannot perceive Xylem directly. They must use "Intellectual Imagination" to construct the internal model based on the visible evidence (red dye).</p>
+                            </div>
+                            <div class="bg-indigo-50 p-4 rounded-xl">
+                                <h4 class="font-bold text-slate-700 text-sm mb-2">Personification (Hero)</h4>
+                                <p class="text-slate-600 text-xs">Framing the plant as a "Tireless Worker" fighting gravity engages the moral/heroic sensibilities of the 6-12 year old.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 5: GUIDE'S COMPASS -->
+            <div class="lab-card group" onclick="toggleCard(this)">
+                <div class="p-6 flex flex-col h-full relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-compass"></i>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-amber-600 transition-colors">Guide's Compass</h3>
+                    <p class="text-sm text-slate-500">Cosmic Task & Technical Citations.</p>
+
+                    <!-- HIDDEN CONTENT -->
+                    <div class="card-content">
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-4 mt-4">
+                            <h4 class="font-bold text-amber-800 text-xs uppercase tracking-widest mb-1">Cosmic Task</h4>
+                            <p class="text-slate-700 text-sm italic">"The plant acts as the great mediator, pulling water from the earth to release it to the sky, facilitating the global water cycle."</p>
+                        </div>
+                        <ul class="space-y-3 border-t border-slate-100 pt-4">
+                            <li class="flex items-start gap-3 text-sm text-slate-600">
+                                <i class="fa-solid fa-book text-amber-400 mt-1"></i>
+                                <span><strong>Montessori:</strong> <em>From Childhood to Adolescence</em> (Abstraction).</span>
+                            </li>
+                            <li class="flex items-start gap-3 text-sm text-slate-600">
+                                <i class="fa-solid fa-book text-amber-400 mt-1"></i>
+                                <span><strong>Bruner:</strong> <em>Theory of Instruction</em> (Iconic Representation).</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 6: PREP ROOM -->
+            <div class="lab-card group" onclick="toggleCard(this)">
+                <div class="p-6 flex flex-col h-full relative">
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-emerald-600 transition-colors">The Prep Room</h3>
+                    <p class="text-sm text-slate-500">Specimen Procurement & Lab Safety.</p>
+
+                    <!-- HIDDEN CONTENT -->
+                    <div class="card-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                            <div>
+                                <h4 class="font-bold text-emerald-600 text-xs uppercase mb-3">Fresh Specimens</h4>
+                                <ul class="text-sm text-slate-600 space-y-2">
+                                    <li><input type="checkbox" class="accent-emerald-500"> Celery Stalk (Apium graveolens)</li>
+                                    <li><input type="checkbox" class="accent-emerald-500"> Tuber (Solanum tuberosum)</li>
+                                    <li><input type="checkbox" class="accent-emerald-500"> Rhizome (Zingiber officinale)</li>
+                                    <li><input type="checkbox" class="accent-emerald-500"> Bulb (Allium cepa)</li>
+                                    <li><input type="checkbox" class="accent-emerald-500"> Stolon/Procumbent (Fragaria)</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-emerald-600 text-xs uppercase mb-3">Lab Tools</h4>
+                                <ul class="text-sm text-slate-600 space-y-2">
+                                    <li><input type="checkbox" class="accent-emerald-500"> Red Food Dye (Aniline/Vegetable)</li>
+                                    <li><input type="checkbox" class="accent-emerald-500"> Borosilicate Beakers</li>
+                                    <li><input type="checkbox" class="accent-emerald-500"> Scalpel / Paring Knife</li>
+                                    <li><input type="checkbox" class="accent-emerald-500"> Capillarity Demo (Tissue)</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-red-50 text-red-700 border border-red-100 rounded text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                            <span><strong>Safety:</strong> Sharps hazard. Pre-cut fibrous stems for children with developing motor coordination.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- FOOTER: RABBIT HOLES -->
+    <section class="max-w-5xl mx-auto px-6 mt-16 pb-12">
+        <div class="border-t border-slate-200 pt-8 text-center">
+            <h3 class="text-slate-400 font-bold uppercase tracking-widest text-xs mb-8">Rabbit Holes for the Curious</h3>
+            <div class="flex flex-wrap justify-center gap-6">
+                <div class="sticky-note p-4 w-48 rotate-2 text-left">
+                    <h4 class="font-bold text-slate-800 text-xs uppercase mb-1">Etymology</h4>
+                    <p class="font-handwritten text-sm leading-tight text-slate-700"><strong>Herbaceous</strong> &larr; Latin <em>Herbaceus</em> (Grassy).<br><strong>Lignin</strong> &larr; Latin <em>Lignum</em> (Wood).</p>
+                </div>
+                <div class="sticky-note p-4 w-48 -rotate-1 bg-blue-100 text-left">
+                    <h4 class="font-bold text-slate-800 text-xs uppercase mb-1">Paleobotany</h4>
+                    <p class="font-handwritten text-sm leading-tight text-slate-700">Did Sauropods digest lignified stems? (Yes, via gastroliths and fermentation!)</p>
+                </div>
+                <div class="sticky-note p-4 w-48 rotate-1 bg-rose-100 text-left">
+                    <h4 class="font-bold text-slate-800 text-xs uppercase mb-1">Mnemonic</h4>
+                    <p class="font-handwritten text-sm leading-tight text-slate-700"><strong>Phloem</strong> flows to the feet (sugars).<br><strong>Xylem</strong> zips to the sky (water).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function toggleCard(card) {
+            // Check if already active
+            if (card.classList.contains('active')) {
+                card.classList.remove('active');
+            } else {
+                card.classList.add('active');
+            }
+        }
+
+        function scrollToId(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
