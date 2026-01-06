@@ -88,9 +88,98 @@
             backdrop-filter: blur(8px);
             border-bottom: 1px solid #e2e8f0;
         }
+
+        /* EF Sidebar (Overlay) */
+        .ef-sidebar {
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            padding: 2rem;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 60;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .ef-sidebar.open { transform: translateX(0); }
+
+        .ef-toggle {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            z-index: 70;
+            background: #0f172a;
+            color: white;
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .ef-toggle:hover { transform: scale(1.1); }
+
     </style>
 </head>
 <body class="pb-24">
+
+    <!-- EF SIDEBAR TOGGLE -->
+    <button onclick="toggleEF()" class="ef-toggle" title="Open Executive Function Dashboard">
+        <i class="fa-solid fa-brain"></i>
+    </button>
+
+    <!-- EF SIDEBAR CONTENT -->
+    <aside id="ef-panel" class="ef-sidebar">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-xl font-bold text-slate-800">My Brain Board</h2>
+            <button onclick="toggleEF()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+
+        <!-- Energy Meter -->
+        <div class="mb-8">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Current Bandwidth</h4>
+            <div class="flex gap-2">
+                <button onclick="setEnergy('high')" id="btn-high" class="flex-1 py-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-xs font-bold hover:bg-green-100">Explorer</button>
+                <button onclick="setEnergy('low')" id="btn-low" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-500 text-xs font-bold hover:bg-slate-50">Triage</button>
+            </div>
+            <p id="energy-msg" class="text-xs text-slate-500 mt-3 italic leading-relaxed">
+                "I have time to wander and wonder."
+            </p>
+        </div>
+
+        <!-- Next Actions -->
+        <div class="mb-8 flex-grow">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Next Actions</h4>
+            <div class="space-y-2">
+                <div class="flex items-center gap-3 p-3 bg-teal-50 rounded-lg border border-teal-100">
+                    <input type="checkbox" class="accent-teal-600 w-4 h-4">
+                    <span class="text-sm text-teal-800 font-medium">Buy Celery (Botany)</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-sky-50 rounded-lg border border-sky-100">
+                    <input type="checkbox" class="accent-sky-600 w-4 h-4">
+                    <span class="text-sm text-sky-800 font-medium">Prep Wind Chart (Geo)</span>
+                </div>
+                <div class="p-3 border border-dashed border-slate-300 rounded-lg text-center text-slate-400 text-xs cursor-pointer hover:bg-slate-50">
+                    + Add Task
+                </div>
+            </div>
+        </div>
+
+        <!-- The Parking Lot -->
+        <div class="mt-auto">
+            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">The Parking Lot</h4>
+            <textarea class="w-full h-32 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-slate-700 placeholder-yellow-800/50 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Distracting thought? Park it here for later..."></textarea>
+        </div>
+    </aside>
 
     <!-- HEADER -->
     <header class="pt-16 pb-12 px-6 max-w-7xl mx-auto text-center">
@@ -389,6 +478,30 @@
         </section>
 
     </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        function toggleEF() {
+            const panel = document.getElementById('ef-panel');
+            panel.classList.toggle('open');
+        }
+
+        function setEnergy(level) {
+            const msg = document.getElementById('energy-msg');
+            const highBtn = document.getElementById('btn-high');
+            const lowBtn = document.getElementById('btn-low');
+
+            if (level === 'high') {
+                msg.textContent = "\"I have time to wander and wonder.\"";
+                highBtn.className = "flex-1 py-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-xs font-bold";
+                lowBtn.className = "flex-1 py-2 rounded-lg border border-slate-200 text-slate-400 text-xs font-bold hover:bg-slate-50";
+            } else {
+                msg.textContent = "\"Just the facts. Get in, get out.\"";
+                lowBtn.className = "flex-1 py-2 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 text-xs font-bold";
+                highBtn.className = "flex-1 py-2 rounded-lg border border-slate-200 text-slate-400 text-xs font-bold hover:bg-slate-50";
+            }
+        }
+    </script>
 
 </body>
 </html>
