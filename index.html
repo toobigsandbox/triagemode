@@ -162,7 +162,11 @@
             <div class="space-y-2">
                 <div class="flex items-center gap-3 p-3 bg-teal-50 rounded-lg border border-teal-100">
                     <input type="checkbox" class="accent-teal-600 w-4 h-4">
-                    <span class="text-sm text-teal-800 font-medium">Buy Celery (Botany)</span>
+                    <span class="text-sm text-teal-800 font-medium">Soak Lima Beans (Seed)</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-rose-50 rounded-lg border border-rose-100">
+                    <input type="checkbox" class="accent-rose-600 w-4 h-4">
+                    <span class="text-sm text-rose-800 font-medium">Buy Peaches (Fruit)</span>
                 </div>
                 <div class="flex items-center gap-3 p-3 bg-sky-50 rounded-lg border border-sky-100">
                     <input type="checkbox" class="accent-sky-600 w-4 h-4">
@@ -258,19 +262,44 @@
                     </div>
                 </a>
 
-                <!-- Botany: Flower -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Botany</div>
-                    <h3 class="text-lg font-bold text-slate-600">The Flower</h3>
-                    <p class="text-xs text-slate-400 mt-2">Parts • Pollination • Fertilization</p>
-                </div>
+                <!-- Botany: Flower (ACTIVE) -->
+                <a href="botany_flower_dashboard.html" class="module-card active group">
+                    <div class="h-2 bg-teal-500 w-full absolute top-0 left-0"></div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="text-[10px] font-bold text-teal-600 uppercase">Botany • Active</div>
+                            <i class="fa-solid fa-arrow-right text-teal-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-teal-700">The Flower</h3>
+                        <p class="text-sm text-slate-500 mt-2">Function, Parts, & The Pollination Trick.</p>
+                    </div>
+                </a>
 
-                <!-- Botany: Fruit & Seed -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Botany</div>
-                    <h3 class="text-lg font-bold text-slate-600">Fruit & Seed</h3>
-                    <p class="text-xs text-slate-400 mt-2">Dispersal • Germination</p>
-                </div>
+                 <!-- Botany: The Seed (ACTIVE) -->
+                 <a href="botany_seed_dashboard.html" class="module-card active group">
+                    <div class="h-2 bg-emerald-500 w-full absolute top-0 left-0"></div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="text-[10px] font-bold text-emerald-600 uppercase">Botany • Active</div>
+                            <i class="fa-solid fa-arrow-right text-emerald-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-emerald-700">The Seed</h3>
+                        <p class="text-sm text-slate-500 mt-2">The Traveler, Monocots, & Dicots.</p>
+                    </div>
+                </a>
+
+                <!-- Botany: Fruit (NEWLY ACTIVE) -->
+                 <a href="botany_fruit_dashboard.html" class="module-card active group">
+                    <div class="h-2 bg-rose-500 w-full absolute top-0 left-0"></div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="text-[10px] font-bold text-rose-600 uppercase">Botany • New</div>
+                            <i class="fa-solid fa-arrow-right text-rose-500"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-rose-700">The Fruit</h3>
+                        <p class="text-sm text-slate-500 mt-2">Protection, Dispersal & Types.</p>
+                    </div>
+                </a>
 
                 <!-- Zoology -->
                 <div class="module-card locked p-6">
@@ -324,7 +353,7 @@
                 </div>
 
                 <!-- Work of Air (ACTIVE) -->
-                <a href="#" class="module-card active group">
+                <a href="geography_air.html" class="module-card active group">
                     <div class="h-2 bg-sky-500 w-full absolute top-0 left-0"></div>
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-2">
@@ -493,7 +522,7 @@
 
             if (level === 'high') {
                 msg.textContent = "\"I have time to wander and wonder.\"";
-                highBtn.className = "flex-1 py-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-xs font-bold";
+                highBtn.className = "flex-1 py-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-xs font-bold hover:bg-green-100";
                 lowBtn.className = "flex-1 py-2 rounded-lg border border-slate-200 text-slate-400 text-xs font-bold hover:bg-slate-50";
             } else {
                 msg.textContent = "\"Just the facts. Get in, get out.\"";
