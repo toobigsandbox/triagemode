@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geography: The Fluid Earth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@300;400;700;900&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .font-header { font-family: 'Bangers', cursive; letter-spacing: 0.05em; }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+        }
+
+        .fluid-visual {
+            background: linear-gradient(135deg, #1e3a8a 0%, #0c4a6e 100%);
+            border-radius: 32px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes waves {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .wave-layer { animation: waves 4s ease-in-out infinite; }
+    </style>
+</head>
+<body class="pb-24">
+
+    <!-- NAVIGATION -->
+    <nav class="p-6 flex justify-between items-center">
+        <button onclick="window.history.back()" class="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors">
+            <i class="fa-solid fa-chevron-left"></i> Triage Dash
+        </button>
+        <div class="bg-slate-800 rounded-full p-1 border border-white/5 flex">
+            <button onclick="setFluid('water')" id="btn-water" class="px-6 py-2 rounded-full text-xs font-bold transition-all bg-blue-500 text-white">WATER</button>
+            <button onclick="setFluid('air')" id="btn-air" class="px-6 py-2 rounded-full text-xs font-bold transition-all text-slate-400">AIR</button>
+        </div>
+    </nav>
+
+    <!-- MAIN DASHBOARD -->
+    <main class="max-w-6xl mx-auto px-4 mt-8">
+
+        <!-- WATER SECTION -->
+        <section id="fluid-water" class="space-y-12">
+            <header class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="flex-1">
+                    <h1 class="font-header text-8xl text-blue-400 leading-none mb-4">The Sculptor</h1>
+                    <p class="text-xl text-blue-100 italic font-light mb-8">"Water carves, carries, and deposits. It never stops."</p>
+                    <div class="glass-card p-6 border-l-4 border-blue-500">
+                        <p class="text-sm leading-relaxed text-slate-300">
+                            <strong>The Law:</strong> Water is a liquid. It follows the path of least resistance. 
+                            From the highlands (Source) to the lowlands (Sea), it changes the face of the Earth.
+                        </p>
+                    </div>
+                </div>
+                <div class="w-full md:w-96 h-96 fluid-visual flex items-center justify-center p-8">
+                    <div class="text-center space-y-4">
+                        <div class="w-24 h-24 bg-blue-400/20 rounded-full flex items-center justify-center text-5xl text-blue-400 wave-layer">
+                            <i class="fa-solid fa-droplet"></i>
+                        </div>
+                        <p class="text-[10px] font-mono text-blue-300 uppercase tracking-widest">Simulation: Erosion Cycle</p>
+                        <div class="flex gap-2">
+                            <span class="px-3 py-1 bg-blue-500/10 rounded text-[10px] text-blue-200">CARVE</span>
+                            <span class="px-3 py-1 bg-blue-500/10 rounded text-[10px] text-blue-200">CARRY</span>
+                            <span class="px-3 py-1 bg-blue-500/10 rounded text-[10px] text-blue-200">DEPOSIT</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-6">
+                    <h4 class="font-bold text-blue-300 mb-2">The River Path</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Source &rarr; Course &rarr; Banks &rarr; Delta. The delta is where the river finally "gives up" its burden.</p>
+                </div>
+                <div class="glass-card p-6">
+                    <h4 class="font-bold text-blue-300 mb-2">V vs. U</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Rivers cut like a saw (V-shaped). Glaciers scrape like a heavy bulldozer (U-shaped).</p>
+                </div>
+                <div class="glass-card p-6">
+                    <h4 class="font-bold text-blue-300 mb-2">Expansion Force</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Ice is the only matter that expands. It breaks mountains into pieces from the inside out.</p>
+                </div>
+                <div class="glass-card p-6">
+                    <h4 class="font-bold text-blue-300 mb-2">The Water Cycle</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Evaporation &rarr; Condensation &rarr; Precipitation. The Earth's continuous recycling machine.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- AIR SECTION (Hidden) -->
+        <section id="fluid-air" class="hidden space-y-12">
+            <header class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="flex-1">
+                    <h1 class="font-header text-8xl text-sky-400 leading-none mb-4">The Engine</h1>
+                    <p class="text-xl text-sky-100 italic font-light mb-8">"Invisible, but heavy. Moving, but silent."</p>
+                    <div class="glass-card p-6 border-l-4 border-sky-400">
+                        <p class="text-sm leading-relaxed text-slate-300">
+                            <strong>The Law:</strong> Air has weight (Pressure). Hot air rises, Cold air sinks. 
+                            This simple dance creates every wind and storm on Earth.
+                        </p>
+                    </div>
+                </div>
+                <div class="w-full md:w-96 h-96 fluid-visual flex items-center justify-center p-8 bg-sky-900/50">
+                    <div class="text-center space-y-4">
+                        <div class="w-24 h-24 bg-sky-400/20 rounded-full flex items-center justify-center text-5xl text-sky-400 animate-pulse">
+                            <i class="fa-solid fa-wind"></i>
+                        </div>
+                        <p class="text-[10px] font-mono text-sky-300 uppercase tracking-widest">Simulation: Convection Cells</p>
+                    </div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6">
+                    <h4 class="font-bold text-sky-300 mb-2">Pressure Play</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">Rising air = Low Pressure (Light). Sinking air = High Pressure (Heavy). Wind always moves from High to Low.</p>
+                </div>
+                <div class="glass-card p-6">
+                    <h4 class="font-bold text-sky-300 mb-2">Coriolis Effect</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">The Earth spins so fast that the winds get "slanted." We cannot draw a straight line on a spinning sphere.</p>
+                </div>
+                <div class="glass-card p-6">
+                    <h4 class="font-bold text-sky-300 mb-2">The Doldrums</h4>
+                    <p class="text-xs text-slate-400 leading-relaxed">At the equator, air goes straight up. No horizontal wind means sailors got stuck for weeks.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function setFluid(type) {
+            const water = document.getElementById('fluid-water');
+            const air = document.getElementById('fluid-air');
+            const btnWater = document.getElementById('btn-water');
+            const btnAir = document.getElementById('btn-air');
+
+            if (type === 'water') {
+                water.classList.remove('hidden');
+                air.classList.add('hidden');
+                btnWater.className = "px-6 py-2 rounded-full text-xs font-bold transition-all bg-blue-500 text-white";
+                btnAir.className = "px-6 py-2 rounded-full text-xs font-bold transition-all text-slate-400";
+            } else {
+                air.classList.remove('hidden');
+                water.classList.add('hidden');
+                btnAir.className = "px-6 py-2 rounded-full text-xs font-bold transition-all bg-sky-400 text-white";
+                btnWater.className = "px-6 py-2 rounded-full text-xs font-bold transition-all text-slate-400";
+            }
+        }
+    </script>
+</body>
+</html>
