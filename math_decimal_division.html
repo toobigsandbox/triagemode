@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decimal Division: The Garden Party</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600;700&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sky-blue: #bae6fd;
+            --grass-green: #86efac;
+            --candy-pink: #f9a8d4;
+            --pop-purple: #a855f7;
+            --soil-brown: #78350f;
+        }
+
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background-color: var(--sky-blue);
+            background-image: 
+                radial-gradient(circle at 10% 10%, white 2%, transparent 2.5%),
+                radial-gradient(circle at 90% 80%, white 1.5%, transparent 2%);
+            background-size: 100px 100px;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .handwritten { font-family: 'Gaegu', cursive; font-weight: 700; }
+
+        /* --- POPTROPICA / PAPER CUTOUT STYLE --- */
+        .pop-card {
+            background: white;
+            border: 4px solid #333;
+            border-radius: 20px;
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.2);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pop-card:hover {
+            transform: translateY(-5px) rotate(1deg);
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.15);
+        }
+
+        .sticker-btn {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px #333;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.1s;
+        }
+        .sticker-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0px 0px 0px #333;
+        }
+
+        /* --- GAME PIECES (2D Stand-ups) --- */
+        .skittle {
+            width: 40px;
+            height: 60px;
+            border: 3px solid #333;
+            border-radius: 50% 50% 10px 10px;
+            position: relative;
+            display: inline-block;
+            box-shadow: 3px 3px 0px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
+        .skittle::after {
+            content: '';
+            position: absolute;
+            top: 5px; right: 5px;
+            width: 10px; height: 10px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+        }
+        .skittle-green { background: #4ade80; }
+        .skittle-blue { background: #60a5fa; }
+        .skittle-red { background: #f87171; }
+
+        .bead-disk {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #333;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-family: 'Gaegu', cursive;
+            background: white;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* The Magic Table (Shared Styles) */
+        .magic-table {
+            background: #dcfce7; /* Light green tablecloth */
+            border-bottom: 8px solid #166534; /* Table edge */
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        
+        .table-pattern {
+            position: absolute;
+            inset: 0;
+            background-image: repeating-linear-gradient(45deg, rgba(22, 101, 52, 0.05) 0, rgba(22, 101, 52, 0.05) 20px, transparent 20px, transparent 40px);
+        }
+
+        /* The Spread Container */
+        .spread-container {
+            background: #ecfdf5;
+            border: 4px solid #333;
+            border-radius: 20px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.1);
+            position: relative;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            overflow: visible; /* Changed to visible for focus box */
+        }
+
+        /* Focus Box for Answer */
+        .focus-box {
+            position: absolute;
+            border: 4px dashed #a855f7;
+            border-radius: 12px;
+            animation: pulseFocus 2s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes pulseFocus {
+            0% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+            100% { opacity: 0.5; transform: scale(1); }
+        }
+
+        /* RABBIT HOLE (Whack-a-Mole) */
+        .mole-hill {
+            background: var(--soil-brown);
+            border-radius: 50% 50% 0 0;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #333;
+            border-bottom: none;
+        }
+        .mole-head {
+            position: absolute;
+            bottom: -100%;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: bottom 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+        .mole-hill:hover .mole-head { bottom: 0; }
+
+        /* Animations */
+        @keyframes floatIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes popUp { from { transform: scale(0); } to { transform: scale(1); } }
+        
+        .animate-float-in { animation: floatIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .animate-pop-up { animation: popUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+    </style>
+</head>
+<body class="pb-32">
+
+    <!-- NAV BAR -->
+    <nav class="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
+        <div class="max-w-6xl mx-auto flex justify-between items-center pointer-events-auto">
+            <div class="pop-card px-6 py-3 flex items-center gap-4 bg-white">
+                <a href="index.html" class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center hover:bg-gray-300 transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h1 class="font-bold text-lg leading-none text-gray-800">Decimal Division</h1>
+                    <p class="text-xs text-purple-500 font-bold uppercase tracking-wider">Lesson 9 • The Tea Party</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="toggleApparatus()" class="sticker-btn px-4 py-2 bg-blue-300 text-blue-900 text-sm hidden md:block">
+                    <i class="fa-solid fa-toolbox mr-2"></i>The Shed
+                </button>
+                <button onclick="toggleEF()" class="sticker-btn w-12 h-12 bg-pink-300 text-pink-900 flex items-center justify-center text-xl rounded-full">
+                    🧠
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-6xl mx-auto mt-28 px-4">
+
+        <!-- 1. THE HOOK: THE IMPOSSIBLE TEA PARTY -->
+        <section class="explorer-only mb-12">
+            <div class="pop-card p-8 bg-gradient-to-br from-green-100 to-blue-50 relative">
+                <!-- Decorative Elements -->
+                <div class="absolute -top-6 -right-6 text-9xl opacity-20 rotate-12">🫖</div>
+                
+                <div class="relative z-10 text-center">
+                    <div class="inline-block px-4 py-1 bg-purple-500 text-white font-bold text-xs rounded-full border-2 border-purple-700 mb-4 shadow-lg transform -rotate-2">
+                        The Problem
+                    </div>
+                    <h2 class="text-5xl md:text-6xl font-black text-gray-800 mb-6 handwritten text-shadow-sm">
+                        Sharing <span class="text-blue-500">8.6</span> Cakes...<br>
+                        with <span class="text-green-500">4.3</span> People?
+                    </h2>
+                    <p class="text-xl text-gray-600 font-bold max-w-lg mx-auto bg-white/50 p-4 rounded-xl backdrop-blur-sm border-2 border-white">
+                        "I can share treats with 4 people. I can share with 5 people. But how do I share with <span class="text-pink-500">4.3 people</span>? Do I chop a person in half?"
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. THE FULL SPREAD (CORRECTED) -->
+        <section class="spread-container explorer-only">
+            <div class="absolute top-0 left-0 bg-yellow-300 px-4 py-2 border-b-4 border-r-4 border-gray-800 rounded-br-xl font-bold text-sm z-20">
+                🌱 The Garden Table (Solution View)
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-end relative z-10">
+                
+                <!-- The Dividend (Treats) -->
+                <div class="md:col-span-3 bg-white/60 p-4 rounded-xl border-2 border-dashed border-green-400 text-center flex flex-col justify-between h-full">
+                    <div>
+                        <h4 class="font-bold text-green-800 text-xs uppercase mb-2">Total Treats (8.6)</h4>
+                        <div class="text-xs text-gray-500 italic mb-2">"We shared it all!"</div>
+                    </div>
+                    <div class="opacity-50 grayscale transform scale-75">
+                        <!-- Ghost of the beads -->
+                        <div class="flex flex-wrap justify-center gap-1">
+                            <div class="bead-disk bg-green-200 text-gray-400 w-6 h-6 text-[8px]">1</div>
+                            <div class="bead-disk bg-green-200 text-gray-400 w-6 h-6 text-[8px]">1</div>
+                            <div class="text-xs font-bold text-gray-400">...Empty!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The Action (Sharing) -->
+                <div class="md:col-span-6 flex justify-center items-end pb-4 relative">
+                    <div class="relative w-full">
+                        
+                        <div class="flex justify-center items-end gap-4">
+                            <!-- Unit Skittles (With 2 beads EACH) -->
+                            <div class="flex gap-2 items-end">
+                                <!-- Skittle 1 (THE ANSWER KEY) -->
+                                <div class="flex flex-col items-center relative" id="answer-key">
+                                    <!-- The Focus Box -->
+                                    <div class="absolute -inset-2 border-4 border-purple-500 rounded-xl z-0 animate-pulse"></div>
+                                    <div class="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-purple-600 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md z-20 whitespace-nowrap">Read Me!</div>
+                                    
+                                    <div class="flex flex-col-reverse -space-y-3 mb-2 z-10">
+                                        <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-md border-2 border-white">1</div>
+                                        <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-md border-2 border-white">1</div>
+                                    </div>
+                                    <div class="skittle skittle-green h-20 w-12 z-10"></div>
+                                </div>
+
+                                <!-- Other Units -->
+                                <div class="flex flex-col items-center opacity-70">
+                                    <div class="flex flex-col-reverse -space-y-3 mb-2">
+                                        <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-sm">1</div>
+                                        <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-sm">1</div>
+                                    </div>
+                                    <div class="skittle skittle-green h-20 w-12"></div>
+                                </div>
+                                <div class="flex flex-col items-center opacity-70">
+                                    <div class="flex flex-col-reverse -space-y-3 mb-2">
+                                        <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-sm">1</div>
+                                        <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-sm">1</div>
+                                    </div>
+                                    <div class="skittle skittle-green h-20 w-12"></div>
+                                </div>
+                                <div class="flex flex-col items-center opacity-70">
+                                    <div class="flex flex-col-reverse -space-y-3 mb-2">
+                                        <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-sm">1</div>
+                                        <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-sm">1</div>
+                                    </div>
+                                    <div class="skittle skittle-green h-20 w-12"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Divider -->
+                            <div class="w-1 h-20 bg-gray-300 rounded-full mx-2"></div>
+
+                            <!-- Tenths Skittles (With 0.2 EACH) -->
+                            <div class="flex gap-2 items-end opacity-50 grayscale">
+                                <div class="flex flex-col items-center">
+                                    <div class="flex flex-col-reverse -space-y-2 mb-2">
+                                        <div class="bead-disk bg-blue-300 w-6 h-6 text-[10px] shadow-sm">.1</div>
+                                        <div class="bead-disk bg-blue-300 w-6 h-6 text-[10px] shadow-sm">.1</div>
+                                    </div>
+                                    <div class="skittle skittle-blue h-14 w-8"></div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="flex flex-col-reverse -space-y-2 mb-2">
+                                        <div class="bead-disk bg-blue-300 w-6 h-6 text-[10px] shadow-sm">.1</div>
+                                        <div class="bead-disk bg-blue-300 w-6 h-6 text-[10px] shadow-sm">.1</div>
+                                    </div>
+                                    <div class="skittle skittle-blue h-14 w-8"></div>
+                                </div>
+                                <div class="flex flex-col items-center">
+                                    <div class="flex flex-col-reverse -space-y-2 mb-2">
+                                        <div class="bead-disk bg-blue-300 w-6 h-6 text-[10px] shadow-sm">.1</div>
+                                        <div class="bead-disk bg-blue-300 w-6 h-6 text-[10px] shadow-sm">.1</div>
+                                    </div>
+                                    <div class="skittle skittle-blue h-14 w-8"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Connecting Arrow -->
+                        <svg class="absolute top-1/2 left-20 w-32 h-20 pointer-events-none z-30 overflow-visible" style="top: -20px; left: 10%;">
+                            <path d="M 20 20 Q 150 -50 350 20" stroke="#a855f7" stroke-width="4" fill="none" marker-end="url(#arrowhead)" stroke-dasharray="5,5"/>
+                            <defs>
+                                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#a855f7" />
+                                </marker>
+                            </defs>
+                        </svg>
+
+                    </div>
+                </div>
+
+                <!-- The Answer -->
+                <div class="md:col-span-3 text-center relative">
+                    <div class="pop-card p-4 bg-yellow-50 border-yellow-400 transform rotate-2 z-20">
+                        <h4 class="font-bold text-gray-400 text-xs uppercase mb-1">The Quotient</h4>
+                        <p class="text-xs text-gray-500 mb-2">What does ONE Unit get?</p>
+                        <div class="text-6xl font-black text-purple-600 handwritten">2</div>
+                        <div class="text-xs font-bold text-purple-400 mt-1">(2 Beads per Unit)</div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. GUIDE CONTROLS (Step-by-Step Magic) -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 explorer-only">
+            
+            <!-- Script & Controls -->
+            <div class="md:col-span-2 space-y-6">
+                <!-- Visual Stage for Steps -->
+                <div class="pop-card p-0 overflow-hidden">
+                    <div class="bg-purple-100 p-4 border-b-4 border-gray-800 flex justify-between items-center">
+                        <h3 class="font-black text-purple-800 uppercase tracking-widest text-sm">
+                            <i class="fa-solid fa-wand-magic-sparkles mr-2"></i> Step-by-Step Magic
+                        </h3>
+                    </div>
+                    <div class="magic-table min-h-[300px] p-8" id="visual-stage">
+                        <div class="table-pattern"></div>
+                        <!-- Dynamic Content -->
+                    </div>
+                </div>
+
+                <!-- Control Box -->
+                <div class="pop-card p-6 bg-white">
+                    <div class="flex items-start gap-4 mb-4">
+                        <div class="w-12 h-12 bg-yellow-300 rounded-full flex items-center justify-center border-2 border-gray-800 text-2xl shadow-sm">
+                            🗣️
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-gray-400 text-xs uppercase mb-1">Guide's Script</h4>
+                            <p id="guide-script" class="text-xl font-handwritten text-gray-800 leading-snug">
+                                "Let's start by setting the table. We have our Dividend: 8.6."
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-xl border-2 border-blue-100 mb-6">
+                        <h5 class="font-bold text-blue-800 text-xs uppercase mb-1">The Logic (Why?)</h5>
+                        <p id="guide-logic" class="text-sm text-blue-700 font-medium">
+                            We build the quantity first so the child sees exactly *what* is being shared before we worry about *who* is sharing it.
+                        </p>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <button onclick="prevStep()" class="sticker-btn px-6 py-3 bg-gray-200 text-gray-600 hover:bg-gray-300 text-sm">
+                            <i class="fa-solid fa-backward"></i> Back
+                        </button>
+                        <button onclick="nextStep()" class="flex-1 sticker-btn px-6 py-3 bg-green-400 text-green-900 text-lg hover:bg-green-300 shadow-lg animate-bounce-slow">
+                            Next Step <i class="fa-solid fa-forward ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Tools -->
+            <div class="space-y-6">
+                <!-- Progress -->
+                <div class="pop-card p-4 bg-white rotate-1">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 text-center">Lesson Progress</h4>
+                    <div class="w-full bg-gray-200 rounded-full h-4 border-2 border-gray-800 overflow-hidden">
+                        <div id="progress-bar" class="bg-purple-500 h-full w-0 transition-all duration-500"></div>
+                    </div>
+                    <p id="step-counter" class="text-center text-xs font-bold mt-2 text-gray-500">Step 0 of 5</p>
+                </div>
+
+                <!-- Teacher Note -->
+                <div class="pop-card p-4 bg-yellow-100 -rotate-1 border-yellow-400">
+                    <h4 class="text-xs font-bold text-yellow-700 uppercase tracking-widest mb-2"><i class="fa-solid fa-lightbulb mr-1"></i> Quick Tip</h4>
+                    <p class="text-sm text-yellow-900 font-medium leading-tight">
+                        Remember: In decimal division, the answer is always what <strong>ONE UNIT</strong> gets. Not a tenth, not a hundredth. The Unit is King.
+                    </p>
+                </div>
+
+                <!-- Teacher Warning -->
+                <div class="pop-card p-6 bg-red-100 border-red-500 transform rotate-1">
+                    <div class="flex items-start gap-4">
+                        <div class="text-3xl animate-bounce">🍎</div>
+                        <div>
+                            <h3 class="text-lg font-black text-red-600 mb-1">Trainer's Warning</h3>
+                            <p class="text-sm text-red-700 leading-tight font-medium">
+                                "Don't do the 'Recurring Decimal' first!" Start with problems that end neatly.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 4. RABBIT HOLE (Whack-a-Mole) -->
+        <section class="explorer-only mt-16">
+            <h3 class="text-center font-black text-gray-400 uppercase tracking-widest mb-8">Down the Rabbit Hole</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Mole Hill 1: The Recurring Decimal -->
+                <div class="mole-hill h-48 group cursor-pointer" onclick="alert('Ideally this expands to show 13.3333...')">
+                    <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent z-20"></div>
+                    <div class="absolute top-4 left-0 right-0 text-center z-20">
+                        <h4 class="font-black text-yellow-100 text-xl uppercase text-shadow">The Never-Ending Story</h4>
+                        <p class="text-yellow-200/80 text-xs font-bold mt-1">Click to Peek</p>
+                    </div>
+                    
+                    <!-- The Mole (Content) -->
+                    <div class="mole-head bg-white w-3/4 p-4 rounded-t-xl text-center border-4 border-gray-800 border-b-0">
+                        <div class="text-4xl mb-2">∞</div>
+                        <p class="text-xs font-bold text-gray-600">3.3333...</p>
+                        <p class="text-[10px] text-gray-400">"The beads run out, but the numbers don't!"</p>
+                    </div>
+                </div>
+
+                <!-- Mole Hill 2: The Unit Rule -->
+                <div class="mole-hill h-48 group cursor-pointer bg-blue-800">
+                    <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/20 to-transparent z-20"></div>
+                    <div class="absolute top-4 left-0 right-0 text-center z-20">
+                        <h4 class="font-black text-blue-100 text-xl uppercase text-shadow">Why The Unit?</h4>
+                    </div>
+                    
+                    <!-- The Mole -->
+                    <div class="mole-head bg-white w-3/4 p-4 rounded-t-xl text-center border-4 border-gray-800 border-b-0">
+                        <div class="text-4xl mb-2">👑</div>
+                        <p class="text-xs font-bold text-gray-600">The Unit is King</p>
+                        <p class="text-[10px] text-gray-400">"The answer is ALWAYS what one Unit Skittle gets."</p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TRIAGE MODE -->
+        <section class="triage-banner hidden bg-yellow-100 border-l-8 border-yellow-500 p-6 rounded-r-xl shadow-sm mt-8">
+            <h3 class="font-black text-yellow-800 text-2xl mb-4">Lesson Cheat Sheet</h3>
+            <ul class="space-y-3 font-bold text-yellow-900 text-sm">
+                <li><i class="fa-solid fa-check mr-2"></i> <strong>Goal:</strong> Divide decimals by decimals using Skittles/Beads.</li>
+                <li><i class="fa-solid fa-check mr-2"></i> <strong>Key Rule:</strong> Tenths Skittles get 10x less than Units.</li>
+                <li><i class="fa-solid fa-check mr-2"></i> <strong>Problem 1:</strong> $8.6 \div 4.3 = 2$ (Standard).</li>
+                <li><i class="fa-solid fa-check mr-2"></i> <strong>Problem 2:</strong> $0.4 \div 0.25 = 1.6$ (Requires Exchange).</li>
+            </ul>
+        </section>
+
+    </main>
+
+    <!-- EF SIDEBAR (Garden Gate) -->
+    <aside id="ef-panel" class="garden-gate fixed right-0 top-0 h-full w-80 bg-pink-50 border-l-4 border-gray-800 transform translate-x-full transition-transform z-[100] p-6 shadow-2xl">
+        <div class="flex justify-between items-center mb-8 border-b-4 border-pink-300 pb-4">
+            <h2 class="text-2xl font-black text-pink-600 handwritten">Brain Garden</h2>
+            <button onclick="toggleEF()" class="text-2xl hover:rotate-90 transition-transform">🌸</button>
+        </div>
+        <div class="space-y-6">
+            <div class="pop-card p-4 bg-white rotate-1">
+                <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">Current Vibe</h4>
+                <div class="flex gap-2">
+                    <button onclick="toggleTriage(false)" class="flex-1 sticker-btn py-2 bg-green-300 text-green-900 text-xs">🐇 Explorer</button>
+                    <button onclick="toggleTriage(true)" class="flex-1 sticker-btn py-2 bg-yellow-300 text-yellow-900 text-xs">🚧 Triage</button>
+                </div>
+            </div>
+            
+            <div class="pop-card p-4 bg-yellow-50 -rotate-1 h-64 flex flex-col">
+                <h4 class="text-xs font-bold text-yellow-600 uppercase tracking-widest mb-2 text-center">Weed Pulling (Distractions)</h4>
+                <textarea class="w-full h-full bg-transparent text-sm text-gray-600 placeholder-yellow-400/50 resize-none focus:outline-none font-handwritten text-xl leading-relaxed" placeholder="Plant your random thoughts here..."></textarea>
+            </div>
+        </div>
+    </aside>
+
+    <!-- APPARATUS MODAL (The Shed) -->
+    <div id="apparatus-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden items-center justify-center p-4">
+        <div class="pop-card bg-white w-full max-w-3xl p-8 relative">
+            <button onclick="toggleApparatus()" class="absolute top-4 right-4 text-2xl hover:text-red-500 transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-4xl font-black text-gray-800 mb-8 handwritten">The Garden Shed (Materials)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Skittles -->
+                <div class="bg-blue-50 p-6 rounded-xl border-2 border-blue-200 text-center">
+                    <h3 class="font-bold text-blue-800 mb-4 uppercase tracking-widest">The Guests (Divisors)</h3>
+                    <div class="flex justify-center gap-4 items-end h-24">
+                        <div class="text-center">
+                            <div class="skittle skittle-green h-20 w-12"></div>
+                            <p class="text-xs font-bold mt-2">Unit</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="skittle skittle-blue h-16 w-10"></div>
+                            <p class="text-xs font-bold mt-2">Tenth</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="skittle skittle-red h-12 w-8"></div>
+                            <p class="text-xs font-bold mt-2">100th</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Beads -->
+                <div class="bg-green-50 p-6 rounded-xl border-2 border-green-200 text-center">
+                    <h3 class="font-bold text-green-800 mb-4 uppercase tracking-widest">The Treats (Dividend)</h3>
+                    <div class="flex justify-center gap-2 flex-wrap">
+                        <div class="bead-disk bg-green-400 text-white">1</div>
+                        <div class="bead-disk bg-blue-300 text-white">0.1</div>
+                        <div class="bead-disk bg-red-300 text-white text-[8px]">0.01</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleEF() { document.getElementById('ef-panel').classList.toggle('translate-x-full'); }
+        function toggleApparatus() { document.getElementById('apparatus-modal').classList.remove('hidden'); document.getElementById('apparatus-modal').classList.add('flex'); }
+        function toggleTriage(enable) {
+            const body = document.body;
+            const expl = document.querySelectorAll('.explorer-only');
+            const tri = document.querySelector('.triage-banner');
+            
+            if(enable) {
+                body.style.backgroundColor = '#fef3c7'; // Yellow tint
+                expl.forEach(el => el.classList.add('hidden'));
+                tri.classList.remove('hidden');
+            } else {
+                body.style.backgroundColor = ''; 
+                expl.forEach(el => el.classList.remove('hidden'));
+                tri.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('apparatus-modal').addEventListener('click', function(e) {
+            if(e.target === this) {
+                this.classList.add('hidden');
+                this.classList.remove('flex');
+            }
+        });
+
+        // --- SIMULATION DATA ---
+        const steps = [
+            {
+                script: "Let's form our dividend: 8 units and 6 tenths.",
+                logic: "We build the quantity first (Concrete) so the child visualizes the 'Treats' to be shared.",
+                visual: `
+                    <div class="flex items-end gap-2 animate-float-in">
+                        <div class="flex flex-col gap-1">
+                            <div class="bead-disk bg-green-400 w-16 h-16 text-2xl border-4">8</div>
+                            <div class="text-center font-bold text-green-700 bg-white/80 px-2 rounded">Units</div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="bead-disk bg-blue-300 w-12 h-12 text-xl border-4">6</div>
+                            <div class="text-center font-bold text-blue-700 bg-white/80 px-2 rounded">Tenths</div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                script: "Now, let's invite the guests (The Divisor: 4.3).",
+                logic: "We use Skittles for the divisor because they represent 'people' or 'groups' receiving the share.",
+                visual: `
+                    <div class="flex gap-4 items-end animate-pop-up">
+                        <div class="flex gap-2">
+                            <div class="skittle skittle-green h-24 w-14 shadow-xl"></div>
+                            <div class="skittle skittle-green h-24 w-14 shadow-xl"></div>
+                            <div class="skittle skittle-green h-24 w-14 shadow-xl"></div>
+                            <div class="skittle skittle-green h-24 w-14 shadow-xl"></div>
+                        </div>
+                        <div class="w-1 h-24 bg-gray-400/50 rounded-full mx-2"></div>
+                        <div class="flex gap-2">
+                            <div class="skittle skittle-blue h-16 w-10 shadow-lg"></div>
+                            <div class="skittle skittle-blue h-16 w-10 shadow-lg"></div>
+                            <div class="skittle skittle-blue h-16 w-10 shadow-lg"></div>
+                        </div>
+                    </div>
+                    <div class="absolute top-4 bg-white/90 border-2 border-gray-800 px-4 py-2 rounded-full font-bold text-gray-600 shadow-md">
+                        4 Units + 3 Tenths
+                    </div>
+                `
+            },
+            {
+                script: "Let's start sharing! Units get Units. But... what do Tenths get?",
+                logic: "This is the core concept. The hierarchical rule: If Units get 1, Tenths must get 10x less (0.1).",
+                visual: `
+                    <div class="flex flex-col items-center gap-6">
+                        <div class="flex gap-8">
+                            <div class="text-center animate-bounce">
+                                <div class="skittle skittle-green h-20 w-12 mx-auto mb-2"></div>
+                                <div class="bead-disk bg-green-400 w-10 h-10">1</div>
+                            </div>
+                            <div class="text-center opacity-50">
+                                <div class="skittle skittle-blue h-14 w-8 mx-auto mb-2"></div>
+                                <div class="bead-disk bg-gray-200 w-8 h-8">?</div>
+                            </div>
+                        </div>
+                        <div class="bg-yellow-200 border-2 border-yellow-500 px-4 py-2 rounded-xl text-yellow-800 font-bold text-sm shadow-sm">
+                            Rule: 10x Less!
+                        </div>
+                    </div>
+                `
+            },
+            {
+                script: "We distribute everything we have! We can do TWO full rounds of sharing.",
+                logic: "Round 1: 4.3 used. Round 2: 4.3 used. Total 8.6 shared. No remainders!",
+                visual: `
+                    <div class="flex gap-4 items-end">
+                        <div class="relative group flex flex-col items-center">
+                            <div class="flex flex-col-reverse -space-y-3 mb-2">
+                                <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-sm border-2 border-white">1</div>
+                                <div class="bead-disk bg-green-400 w-8 h-8 text-xs shadow-sm border-2 border-white">1</div>
+                            </div>
+                            <div class="skittle skittle-green h-24 w-14"></div>
+                            <div class="absolute -top-4 -right-2 bg-white border-2 border-gray-800 rounded-full w-8 h-8 flex items-center justify-center font-bold text-green-600 shadow-sm">2</div>
+                        </div>
+                        <div class="relative group flex flex-col items-center opacity-80">
+                            <div class="flex flex-col-reverse -space-y-3 mb-2">
+                                <div class="bead-disk bg-blue-300 w-6 h-6 text-[10px] shadow-sm border-2 border-white">.1</div>
+                                <div class="bead-disk bg-blue-300 w-6 h-6 text-[10px] shadow-sm border-2 border-white">.1</div>
+                            </div>
+                            <div class="skittle skittle-blue h-16 w-10"></div>
+                            <div class="absolute -top-3 -right-2 bg-white border-2 border-gray-800 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold text-blue-500 shadow-sm">0.2</div>
+                        </div>
+                    </div>
+                    <div class="absolute bottom-4 font-handwritten text-2xl text-purple-600">
+                        Sharing... Done!
+                    </div>
+                `
+            },
+            {
+                script: "The Answer: Look at ONE Green Skittle. What does it have?",
+                logic: "The quotient is defined as 'What one unit receives.' We ignore the blue skittles for the answer.",
+                visual: `
+                    <div class="pop-card p-8 bg-gradient-to-b from-green-50 to-white text-center transform scale-110 border-green-500 shadow-2xl">
+                        <div class="skittle skittle-green h-32 w-20 mx-auto mb-4 shadow-lg"></div>
+                        <div class="flex flex-col-reverse justify-center items-center -space-y-4 mb-4">
+                            <div class="bead-disk bg-green-400 w-12 h-12 text-xl border-4 shadow-md">1</div>
+                            <div class="bead-disk bg-green-400 w-12 h-12 text-xl border-4 shadow-md">1</div>
+                        </div>
+                        <h2 class="text-6xl font-black text-gray-800 handwritten">2</h2>
+                        <p class="text-sm font-bold text-gray-400 mt-2 uppercase tracking-widest">Quotient</p>
+                    </div>
+                `
+            }
+        ];
+
+        let currentStep = 0;
+
+        function updateUI() {
+            const step = steps[currentStep];
+            document.getElementById('visual-stage').innerHTML = `
+                <div class="table-pattern"></div>
+                ${step.visual}
+            `;
+            document.getElementById('guide-script').innerText = step.script;
+            document.getElementById('guide-logic').innerText = step.logic;
+            document.getElementById('step-counter').innerText = `Step ${currentStep + 1} of ${steps.length}`;
+            
+            const progress = ((currentStep + 1) / steps.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>
