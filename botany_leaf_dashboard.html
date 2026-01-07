@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Leaf: Discovery Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* FONTS & VARIABLES */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Outfit:wght@300;400;700;800&family=Lora:ital,wght@0,400;0,600;1,400&family=Patrick+Hand&display=swap');
+
+        :root {
+            --bg-color: #ecfccb; /* Lime-100 tint */
+            --lime: #84cc16;
+            --emerald: #10b981;
+            --sky: #0ea5e9;
+            --yellow: #eab308;
+            --slate: #334155;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(rgba(132, 204, 22, 0.2) 2px, transparent 2px),
+                linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px);
+            background-size: 32px 32px, 100% 32px;
+            color: var(--slate);
+            transition: background-color 0.5s ease;
+        }
+
+        .serif { font-family: 'Lora', serif; }
+        .handwritten { font-family: 'Patrick Hand', cursive; }
+
+        /* --- CARD GRID SYSTEM --- */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) {
+            .card-container { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .lab-card {
+            background: white;
+            border: 2px solid white;
+            border-radius: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .lab-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .lab-card.active {
+            grid-column: 1 / -1; /* Expand to full width */
+            border-color: var(--lime);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            cursor: default;
+        }
+
+        .card-content {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .lab-card.active .card-content {
+            max-height: 2000px;
+            opacity: 1;
+            padding-top: 1.5rem;
+            margin-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        /* --- TRIAGE MODE STYLES --- */
+        body.triage-active {
+            background-color: #fff1f2;
+            background-image: none;
+        }
+        body.triage-active .explorer-only { display: none !important; }
+        body.triage-active .triage-banner { display: flex !important; }
+
+        /* --- SIM CHAMBER (The Solar Factory) --- */
+        .solar-sim {
+            background: linear-gradient(135deg, #1a2e05 0%, #365314 100%);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animation: Sun Beams */
+        .sun-beam {
+            position: absolute;
+            top: -50%;
+            left: 20%;
+            width: 100px;
+            height: 200%;
+            background: linear-gradient(to bottom, rgba(253, 224, 71, 0.3), transparent);
+            transform: rotate(25deg);
+            animation: pulse-light 4s infinite alternate;
+            pointer-events: none;
+        }
+
+        /* Animation: Floating Particles (Oxygen) */
+        .oxygen-bubble {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+            animation: float-up 6s infinite linear;
+        }
+        
+        @keyframes pulse-light {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.6; }
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(100px) scale(0.5); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-200px) scale(1.2); opacity: 0; }
+        }
+
+        .expand-icon { transition: transform 0.3s ease; }
+        .lab-card.active .expand-icon { transform: rotate(180deg); }
+
+        .icon-circle {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Interactive Toggle Switch */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 50px;
+          height: 28px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background-color: #ccc;
+          transition: .4s;
+          border-radius: 34px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 20px;
+          width: 20px;
+          left: 4px;
+          bottom: 4px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--lime); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+    </style>
+</head>
+<body class="pb-24 transition-colors duration-500">
+
+    <!-- EXECUTIVE FUNCTION BAR -->
+    <nav class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-white/20 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <a href="index.html" class="w-10 h-10 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div class="w-10 h-10 bg-lime-500 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    <i class="fa-brands fa-envira"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-slate-800">The Leaf</h1>
+                    <p class="text-xs text-slate-500 uppercase tracking-wider">Botany • The Kitchen</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="toggleTriage()" id="triageBtn" class="group flex items-center gap-2 px-4 py-2 rounded-full border-2 border-transparent transition-all duration-300 bg-slate-100 text-slate-600 hover:bg-slate-200">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span class="font-bold text-sm">Explorer Mode</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Triage Alert Banner -->
+        <div class="triage-banner hidden bg-rose-600 text-white py-2 px-4 justify-center items-center gap-2 text-sm font-bold animate-pulse">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            TRIAGE MODE ACTIVE: Just the essentials.
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-5xl mx-auto mt-24 px-4 space-y-12">
+
+        <!-- 1. THE SIM CHAMBER: THE SOLAR FACTORY (Explorer Only) -->
+        <section class="explorer-only solar-sim p-8 md:p-12 text-white shadow-2xl relative">
+            <!-- Animated Background -->
+            <div class="sun-beam"></div>
+            <div class="sun-beam" style="left: 60%; animation-delay: 1s;"></div>
+            <!-- Bubbles -->
+            <div class="oxygen-bubble w-4 h-4 left-1/4 bottom-0"></div>
+            <div class="oxygen-bubble w-6 h-6 left-2/4 bottom-0" style="animation-delay: 2s"></div>
+            <div class="oxygen-bubble w-3 h-3 left-3/4 bottom-0" style="animation-delay: 4s"></div>
+
+            <div class="relative z-10 flex flex-col md:flex-row gap-8 items-center">
+                <div class="flex-1">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 bg-white/10 backdrop-blur rounded-full text-xs font-bold uppercase tracking-widest mb-4 text-lime-200 border border-white/10">
+                        <i class="fa-solid fa-industry"></i> The Narrative
+                    </div>
+                    <h2 class="text-5xl md:text-6xl font-black mb-4 leading-tight font-sans tracking-tighter">
+                        EATING<br>
+                        <span class="text-yellow-400">THE SUN</span>
+                    </h2>
+                    <p class="text-lg font-serif italic text-lime-100 leading-relaxed max-w-xl">
+                        "Animals must hunt or graze. But the plant stays still. It opens its green hands and catches the light. It is the only chef in the universe that can cook with sunshine."
+                    </p>
+                </div>
+
+                <!-- Interactive "Visual" Cards -->
+                <div class="flex flex-col gap-3 w-full md:w-64">
+                    <!-- Solar Panel Visual -->
+                    <div class="bg-white/10 backdrop-blur p-4 rounded-xl border border-white/20 hover:bg-white/20 transition-colors cursor-help group text-center">
+                        <div class="text-4xl mb-2 animate-pulse text-yellow-300">☀️</div>
+                        <h4 class="font-bold text-sm">The Input</h4>
+                        <p class="text-xs text-lime-200">Light + Air + Water</p>
+                        <div class="hidden group-hover:block absolute right-full mr-4 top-0 bg-white text-slate-800 p-3 rounded-xl w-48 text-xs shadow-xl z-20 text-left">
+                            "The plant takes the 'nothingness' of air and light and turns it into solid wood and food. Magic!"
+                        </div>
+                    </div>
+
+                    <!-- Factory Output Visual -->
+                    <div class="bg-white/10 backdrop-blur p-4 rounded-xl border border-white/20 hover:bg-white/20 transition-colors cursor-help text-center">
+                        <div class="text-4xl mb-2 text-white">🍞</div>
+                        <h4 class="font-bold text-sm">The Output</h4>
+                        <p class="text-xs text-lime-200">Sugar (Food) + Oxygen</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. TRIAGE "CHEAT SHEET" (Triage Only) -->
+        <section class="triage-banner hidden flex-col gap-4">
+            <div class="bg-white rounded-2xl p-6 border-l-8 border-rose-500 shadow-sm">
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">Lesson Snapshot</h2>
+                <ul class="space-y-3 text-slate-600">
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-rose-500 mt-1"></i>
+                        <span><strong>Goal:</strong> Leaf's function is Photosynthesis (Making Food).</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-rose-500 mt-1"></i>
+                        <span><strong>Key Story:</strong> "The Chemical Laboratory" or "The Kitchen."</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <i class="fa-solid fa-check text-rose-500 mt-1"></i>
+                        <span><strong>Materials:</strong> Leaf Cabinet, Real Specimens, Charts.</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="bg-slate-100 rounded-2xl p-6 border border-slate-200">
+                <h3 class="font-bold text-slate-500 text-xs uppercase tracking-widest mb-3">Shopping List</h3>
+                <div class="grid grid-cols-2 gap-2 text-sm text-slate-700">
+                    <label class="flex gap-2"><input type="checkbox"> Houseplant (Big leaves)</label>
+                    <label class="flex gap-2"><input type="checkbox"> Vaseline (Stomata demo)</label>
+                    <label class="flex gap-2"><input type="checkbox"> Variety of shapes (Walk)</label>
+                    <label class="flex gap-2"><input type="checkbox"> Microscope (optional)</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. THE DISCOVERY DECK (Explorer Only) -->
+        <section class="explorer-only">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                <i class="fa-solid fa-layer-group text-lime-600"></i> The Discovery Deck
+                <span class="text-sm font-normal text-slate-400 ml-2">(Click to Expand)</span>
+            </h2>
+
+            <div class="card-container">
+
+                <!-- CARD A: ANATOMY LAB (The Hardware) -->
+                <div class="lab-card group" onclick="toggleCard(this)">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-lime-100 text-lime-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-screwdriver-wrench"></i>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-lime-600 transition-colors">The Hardware</h3>
+                        <p class="text-sm text-slate-500">Parts of the Leaf & Their Jobs.</p>
+
+                        <!-- Hidden Content -->
+                        <div class="card-content">
+                            <div class="grid grid-cols-2 gap-4 text-center">
+                                <div class="bg-lime-50 p-4 rounded-xl border border-lime-100 flex flex-col items-center col-span-2">
+                                    <div class="icon-circle bg-lime-200 text-lime-600">🛡️</div>
+                                    <h4 class="font-bold text-lime-800 mb-1">Blade (Lamina)</h4>
+                                    <p class="text-xs text-slate-600">The Solar Panel itself. Wide and flat to catch maximum sun.</p>
+                                </div>
+                                <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 flex flex-col items-center">
+                                    <div class="icon-circle bg-amber-200 text-amber-600">🪵</div>
+                                    <h4 class="font-bold text-amber-800 mb-1">Petiole</h4>
+                                    <p class="text-[10px] uppercase tracking-wide text-amber-600">"The Stem Connection"</p>
+                                    <p class="text-xs text-slate-500 italic">Think "Pivot Point" for aiming at the sun.</p>
+                                </div>
+                                <div class="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex flex-col items-center">
+                                    <div class="icon-circle bg-emerald-200 text-emerald-600">🩸</div>
+                                    <h4 class="font-bold text-emerald-800 mb-1">Veins</h4>
+                                    <p class="text-[10px] uppercase tracking-wide text-emerald-600">"The Pipelines"</p>
+                                    <p class="text-xs text-slate-500 italic">Delivering water, taking away sugar.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD B: THE CHEMICAL LAB (Photosynthesis) -->
+                <div class="lab-card group" onclick="toggleCard(this)">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-yellow-100 text-yellow-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-flask"></i>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-yellow-600 transition-colors">The Magic Trick</h3>
+                        <p class="text-sm text-slate-500">Photosynthesis: Making food from thin air.</p>
+
+                        <!-- Hidden Content -->
+                        <div class="card-content">
+                            <div class="space-y-4">
+                                <div class="bg-slate-800 text-white p-4 rounded-xl">
+                                    <h4 class="font-mono text-xs text-yellow-300 uppercase mb-2">The Recipe</h4>
+                                    <div class="flex items-center justify-between text-lg font-bold">
+                                        <span>CO₂ + H₂O</span>
+                                        <i class="fa-solid fa-bolt text-yellow-400"></i>
+                                        <span>Sugar + O₂</span>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-2 italic">Requires Chlorophyll (The Green Machine) to catalyze.</p>
+                                </div>
+                                <div class="flex items-center gap-4 bg-sky-50 p-3 rounded-xl border-l-4 border-sky-400">
+                                    <div class="text-2xl">🌬️</div>
+                                    <div>
+                                        <h4 class="font-bold text-sky-900 text-sm">The Waste Product</h4>
+                                        <p class="text-xs text-sky-700">Plants "poop" Oxygen. Lucky for us!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD C: VENTILATION (Stomata) -->
+                <div class="lab-card group" onclick="toggleCard(this)">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-wind"></i>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-sky-600 transition-colors">The Breathing Room</h3>
+                        <p class="text-sm text-slate-500">Stomata: The tiny mouths underneath.</p>
+
+                        <!-- Hidden Content -->
+                        <div class="card-content">
+                            <div class="flex flex-col items-center text-center">
+                                <div class="w-32 h-20 bg-green-100 rounded-full border-4 border-green-600 flex items-center justify-center mb-4 relative overflow-hidden transition-all duration-500" id="stomata-visual">
+                                    <div class="w-20 h-2 bg-slate-800 rounded-full transition-all duration-500" id="stomata-opening"></div>
+                                </div>
+                                
+                                <div class="flex items-center gap-4 mb-4">
+                                    <span class="text-xs font-bold uppercase text-slate-400">Closed (Night)</span>
+                                    <label class="switch">
+                                      <input type="checkbox" onclick="toggleStomata()">
+                                      <span class="slider"></span>
+                                    </label>
+                                    <span class="text-xs font-bold uppercase text-slate-400">Open (Day)</span>
+                                </div>
+
+                                <p class="text-xs text-slate-600 bg-slate-50 p-3 rounded-lg">
+                                    <strong>Stomata</strong> (Greek for "Mouths") open to let CO₂ in and Oxygen out. But they close when it's too hot to stop the plant from sweating to death (Transpiration).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD D: THE ART GALLERY (Varieties) -->
+                <div class="lab-card group" onclick="toggleCard(this)">
+                    <div class="p-6 flex flex-col h-full">
+                        <div class="flex justify-between items-start mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center text-xl font-bold">
+                                <i class="fa-solid fa-shapes"></i>
+                            </div>
+                            <i class="fa-solid fa-chevron-down text-slate-300 expand-icon text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-800 mb-1 group-hover:text-pink-600 transition-colors">The Art Gallery</h3>
+                        <p class="text-sm text-slate-500">Shapes, Margins, and Sun Worship.</p>
+
+                        <!-- Hidden Content -->
+                        <div class="card-content">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-white border border-slate-100 p-3 rounded-lg text-center hover:bg-pink-50 transition-colors">
+                                    <div class="text-2xl mb-1">❤️</div>
+                                    <h4 class="font-bold text-slate-700 text-xs">Cordate</h4>
+                                    <p class="text-[10px] text-slate-500">Heart Shaped</p>
+                                </div>
+                                <div class="bg-white border border-slate-100 p-3 rounded-lg text-center hover:bg-pink-50 transition-colors">
+                                    <div class="text-2xl mb-1">🗡️</div>
+                                    <h4 class="font-bold text-slate-700 text-xs">Lanceolate</h4>
+                                    <p class="text-[10px] text-slate-500">Lance/Spear</p>
+                                </div>
+                                <div class="bg-white border border-slate-100 p-3 rounded-lg text-center hover:bg-pink-50 transition-colors">
+                                    <div class="text-2xl mb-1">🪚</div>
+                                    <h4 class="font-bold text-slate-700 text-xs">Serrate</h4>
+                                    <p class="text-[10px] text-slate-500">Saw-Toothed Edge</p>
+                                </div>
+                                <div class="bg-white border border-slate-100 p-3 rounded-lg text-center hover:bg-pink-50 transition-colors">
+                                    <div class="text-2xl mb-1">🌻</div>
+                                    <h4 class="font-bold text-slate-700 text-xs">Heliotropism</h4>
+                                    <p class="text-[10px] text-slate-500">Turning to the Sun</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 4. FOOTER: RABBIT HOLES -->
+        <section class="explorer-only mt-16 border-t border-slate-200 pt-8 pb-12">
+            <h3 class="text-center text-slate-400 font-bold uppercase tracking-widest text-xs mb-8">Rabbit Holes for the Curious</h3>
+            <div class="flex flex-wrap justify-center gap-6">
+                <div class="bg-emerald-100 p-4 w-48 shadow-lg transform rotate-2 hover:rotate-0 transition-transform cursor-help">
+                    <h4 class="font-bold text-emerald-800 text-xs uppercase mb-1">Autumn Colors</h4>
+                    <p class="handwritten text-sm text-emerald-900 leading-tight">Chlorophyll is green. When it dies in winter, the "hidden" colors (Yellow Xanthophyll and Orange Carotene) finally show up!</p>
+                </div>
+                <div class="bg-lime-100 p-4 w-48 shadow-lg transform -rotate-1 hover:rotate-0 transition-transform cursor-help">
+                    <h4 class="font-bold text-lime-800 text-xs uppercase mb-1">Giant Leaves</h4>
+                    <p class="handwritten text-sm text-lime-900 leading-tight">The <strong>Victoria Water Lily</strong> has leaves up to 10 feet wide! A small child can sit on one without sinking.</p>
+                </div>
+            </div>
+            
+             <!-- Live Parking Lot -->
+            <div class="mt-8 max-w-xl mx-auto">
+                <textarea class="w-full bg-white border border-slate-200 rounded-xl p-4 text-sm focus:ring-2 focus:ring-lime-500 focus:outline-none" rows="2" placeholder="Start typing your own rabbit holes here..."></textarea>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- JS Logic -->
+    <script>
+        function toggleCard(card) {
+            if (card.classList.contains('active')) {
+                card.classList.remove('active');
+            } else {
+                card.classList.add('active');
+            }
+        }
+
+        function toggleTriage() {
+            const body = document.body;
+            const btn = document.getElementById('triageBtn');
+            const span = btn.querySelector('span');
+            const icon = btn.querySelector('i');
+
+            body.classList.toggle('triage-active');
+
+            if (body.classList.contains('triage-active')) {
+                btn.classList.remove('bg-slate-100', 'text-slate-600');
+                btn.classList.add('bg-rose-600', 'text-white', 'shadow-lg');
+                span.innerText = "Exit Triage";
+                icon.classList.remove('fa-heart-pulse');
+                icon.classList.add('fa-xmark');
+            } else {
+                btn.classList.add('bg-slate-100', 'text-slate-600');
+                btn.classList.remove('bg-rose-600', 'text-white', 'shadow-lg');
+                span.innerText = "Explorer Mode";
+                icon.classList.add('fa-heart-pulse');
+                icon.classList.remove('fa-xmark');
+            }
+        }
+
+        function toggleStomata() {
+            const visual = document.getElementById('stomata-opening');
+            if (visual.classList.contains('h-2')) {
+                // Open it
+                visual.classList.remove('h-2', 'bg-slate-800', 'w-20');
+                visual.classList.add('h-12', 'bg-slate-900', 'w-16');
+            } else {
+                // Close it
+                visual.classList.add('h-2', 'bg-slate-800', 'w-20');
+                visual.classList.remove('h-12', 'bg-slate-900', 'w-16');
+            }
+        }
+    </script>
+</body>
+</html>
