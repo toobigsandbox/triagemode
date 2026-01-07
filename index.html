@@ -3,574 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montessori Architect: The Master Map</title>
+    <title>Montessori Architect: The Map Room</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Outfit:wght@300;400;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@300;400;700;900&family=Space+Grotesk:wght@300;500;700&display=swap');
 
         :root {
-            --bg-color: #f8fafc;
-            --grid-color: rgba(100, 116, 139, 0.1);
+            --blueprint-blue: #1e40af;
+            --blueprint-line: rgba(255, 255, 255, 0.05);
+            --tangerine: #f97316;
+            --teal: #0d9488;
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: var(--bg-color);
-            background-image: radial-gradient(var(--grid-color) 2px, transparent 2px);
-            background-size: 32px 32px;
-            color: #334155;
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #020617;
+            background-image: 
+                linear-gradient(var(--blueprint-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--blueprint-line) 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: #f8fafc;
             min-height: 100vh;
         }
 
-        /* Module Card Styles */
-        .module-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden;
+        .font-header { font-family: 'Bangers', cursive; letter-spacing: 0.05em; }
+
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 32px;
+        }
+
+        .album-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .module-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            border-color: #94a3b8;
-        }
-
-        /* Active Card (Ready to Enter) */
-        .module-card.active {
-            border: 2px solid #0d9488;
-            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.1);
-        }
-        .module-card.active:hover {
-            box-shadow: 0 20px 25px -5px rgba(13, 148, 136, 0.2);
-        }
-
-        /* Locked Card */
-        .module-card.locked {
-            opacity: 0.7;
-            background: #f1f5f9;
-            border-style: dashed;
-            cursor: not-allowed;
-        }
-        .module-card.locked:hover {
-            transform: none;
-            border-color: #cbd5e1;
-        }
-
-        /* Category Header Badge */
-        .cat-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            font-weight: 800;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Smooth Scroll */
-        html { scroll-behavior: smooth; }
-        
-        /* Sticky Nav */
-        .album-nav {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(248, 250, 252, 0.9);
-            backdrop-filter: blur(8px);
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        /* EF Sidebar (Overlay) */
-        .ef-sidebar {
-            position: fixed;
-            right: 0;
-            top: 0;
-            height: 100vh;
-            width: 320px;
-            background: white;
-            border-left: 1px solid #e2e8f0;
-            padding: 2rem;
-            transform: translateX(100%);
-            transition: transform 0.3s ease-in-out;
-            z-index: 60;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-        }
-        .ef-sidebar.open { transform: translateX(0); }
-
-        .ef-toggle {
-            position: fixed;
-            right: 2rem;
-            bottom: 2rem;
-            z-index: 70;
-            background: #0f172a;
-            color: white;
-            width: 3.5rem;
-            height: 3.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            transition: transform 0.2s;
             cursor: pointer;
         }
-        .ef-toggle:hover { transform: scale(1.1); }
 
+        .album-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--tangerine);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .status-badge {
+            font-size: 10px;
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-active { background: var(--teal); color: white; box-shadow: 0 0 15px var(--teal); }
+        .status-external { background: #64748b; color: white; border: 1px solid white; }
+        .status-locked { background: #334155; color: #94a3b8; }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+        .scanner::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: var(--tangerine);
+            box-shadow: 0 0 15px var(--tangerine);
+            animation: scan 3s linear infinite;
+            opacity: 0.3;
+        }
     </style>
 </head>
-<body class="pb-24">
+<body class="p-4 md:p-12">
 
-    <!-- EF SIDEBAR TOGGLE -->
-    <button onclick="toggleEF()" class="ef-toggle" title="Open Executive Function Dashboard">
-        <i class="fa-solid fa-brain"></i>
-    </button>
-
-    <!-- EF SIDEBAR CONTENT -->
-    <aside id="ef-panel" class="ef-sidebar">
-        <div class="flex justify-between items-center mb-8">
-            <h2 class="text-xl font-bold text-slate-800">My Brain Board</h2>
-            <button onclick="toggleEF()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-        </div>
-
-        <!-- Energy Meter -->
-        <div class="mb-8">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Current Bandwidth</h4>
-            <div class="flex gap-2">
-                <button onclick="setEnergy('high')" id="btn-high" class="flex-1 py-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-xs font-bold hover:bg-green-100">Explorer</button>
-                <button onclick="setEnergy('low')" id="btn-low" class="flex-1 py-2 rounded-lg border border-slate-200 text-slate-500 text-xs font-bold hover:bg-slate-50">Triage</button>
+    <!-- HEADER / NAVIGATION -->
+    <header class="max-w-7xl mx-auto mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
+        <div>
+            <div class="flex items-center gap-3 mb-4">
+                <span class="bg-tangerine text-white px-3 py-1 rounded text-xs font-black rotate-2 tracking-widest">SPRINT MODE</span>
+                <span class="text-slate-500 text-[10px] font-bold tracking-[0.3em] uppercase">V2.1 // Expanded Universe</span>
             </div>
-            <p id="energy-msg" class="text-xs text-slate-500 mt-3 italic leading-relaxed">
-                "I have time to wander and wonder."
-            </p>
+            <h1 class="font-header text-6xl md:text-8xl text-white leading-none uppercase">The Map Room</h1>
+            <p class="text-slate-400 max-w-lg mt-4 font-light">Welcome to your Prepared Environment. Each album is a world. Each card is a portal. <strong>Pedagogy first.</strong></p>
         </div>
 
-        <!-- Next Actions -->
-        <div class="mb-8 flex-grow">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Next Actions</h4>
-            <div class="space-y-2">
-                <div class="flex items-center gap-3 p-3 bg-teal-50 rounded-lg border border-teal-100">
-                    <input type="checkbox" class="accent-teal-600 w-4 h-4">
-                    <span class="text-sm text-teal-800 font-medium">Soak Lima Beans (Seed)</span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-rose-50 rounded-lg border border-rose-100">
-                    <input type="checkbox" class="accent-rose-600 w-4 h-4">
-                    <span class="text-sm text-rose-800 font-medium">Buy Peaches (Fruit)</span>
-                </div>
-                <div class="flex items-center gap-3 p-3 bg-sky-50 rounded-lg border border-sky-100">
-                    <input type="checkbox" class="accent-sky-600 w-4 h-4">
-                    <span class="text-sm text-sky-800 font-medium">Prep Wind Chart (Geo)</span>
-                </div>
-                <div class="p-3 border border-dashed border-slate-300 rounded-lg text-center text-slate-400 text-xs cursor-pointer hover:bg-slate-50">
-                    + Add Task
-                </div>
+        <div class="glass-panel p-6 flex items-center gap-8 border-l-4 border-tangerine">
+            <div class="text-right">
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Total Progress</p>
+                <p class="text-3xl font-header text-white">6 ALBUMS ACTIVE</p>
+            </div>
+            <div class="w-16 h-16 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center relative overflow-hidden scanner">
+                <i class="fa-solid fa-map-location-dot text-tangerine text-2xl"></i>
             </div>
         </div>
-
-        <!-- The Parking Lot -->
-        <div class="mt-auto">
-            <h4 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">The Parking Lot</h4>
-            <textarea class="w-full h-32 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-slate-700 placeholder-yellow-800/50 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="Distracting thought? Park it here for later..."></textarea>
-        </div>
-    </aside>
-
-    <!-- HEADER -->
-    <header class="pt-16 pb-12 px-6 max-w-7xl mx-auto text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-full text-xs font-bold uppercase tracking-widest mb-6">
-            <i class="fa-solid fa-compass"></i> Guide's Dashboard
-        </div>
-        <h1 class="text-5xl md:text-7xl font-extrabold text-slate-800 mb-6 tracking-tight">
-            The Map <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-500 to-indigo-500">Room</span>
-        </h1>
-        <p class="text-xl text-slate-500 font-serif italic max-w-2xl mx-auto">
-            "We give the child a key to the world, and then we let them open the doors."
-        </p>
     </header>
 
-    <!-- ALBUM NAVIGATION (Sticky) -->
-    <nav class="album-nav px-6 py-4 mb-12">
-        <div class="max-w-7xl mx-auto flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-            <a href="#biology" class="px-4 py-2 rounded-full bg-teal-50 text-teal-700 font-bold text-xs uppercase hover:bg-teal-100 whitespace-nowrap transition-colors">Biology</a>
-            <a href="#geography" class="px-4 py-2 rounded-full bg-sky-50 text-sky-700 font-bold text-xs uppercase hover:bg-sky-100 whitespace-nowrap transition-colors">Geography</a>
-            <a href="#history" class="px-4 py-2 rounded-full bg-amber-50 text-amber-700 font-bold text-xs uppercase hover:bg-amber-100 whitespace-nowrap transition-colors">History</a>
-            <a href="#language" class="px-4 py-2 rounded-full bg-rose-50 text-rose-700 font-bold text-xs uppercase hover:bg-rose-100 whitespace-nowrap transition-colors">Language</a>
-            <a href="#math" class="px-4 py-2 rounded-full bg-indigo-50 text-indigo-700 font-bold text-xs uppercase hover:bg-indigo-100 whitespace-nowrap transition-colors">Math</a>
-            <a href="#geometry" class="px-4 py-2 rounded-full bg-orange-50 text-orange-700 font-bold text-xs uppercase hover:bg-orange-100 whitespace-nowrap transition-colors">Geometry</a>
-            <a href="#music" class="px-4 py-2 rounded-full bg-purple-50 text-purple-700 font-bold text-xs uppercase hover:bg-purple-100 whitespace-nowrap transition-colors">Music</a>
+    <!-- ALBUM GRID -->
+    <main class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+        <!-- MUSIC ALBUM (NEW) -->
+        <a href="music_tone_bars.html" class="album-card glass-panel p-8 group border-t-4 border-teal-500">
+            <div class="flex justify-between items-start mb-8">
+                <div class="w-14 h-14 bg-teal-500/20 text-teal-400 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-music"></i>
+                </div>
+                <span class="status-badge status-active">Active</span>
+            </div>
+            <h2 class="font-header text-4xl text-white mb-2 group-hover:text-teal-400 transition-colors">Music</h2>
+            <p class="text-xs text-slate-400 leading-relaxed">Focus: Tone Bars, Tetrachords, and the Major Scale Pattern.</p>
+        </a>
+
+        <!-- HISTORY ALBUM (NEW) -->
+        <a href="history_clock.html" class="album-card glass-panel p-8 group border-t-4 border-purple-500">
+            <div class="flex justify-between items-start mb-8">
+                <div class="w-14 h-14 bg-purple-500/20 text-purple-400 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                </div>
+                <span class="status-badge status-active">Active</span>
+            </div>
+            <h2 class="font-header text-4xl text-white mb-2 group-hover:text-purple-400 transition-colors">History</h2>
+            <p class="text-xs text-slate-400 leading-relaxed">Focus: The Clock of Eras and the long timeline of Earth.</p>
+        </a>
+
+        <!-- GEOMETRY ALBUM -->
+        <a href="geometry_area.html" class="album-card glass-panel p-8 group">
+            <div class="flex justify-between items-start mb-8">
+                <div class="w-14 h-14 bg-yellow-500/20 text-yellow-400 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-draw-polygon"></i>
+                </div>
+                <span class="status-badge status-active">Active</span>
+            </div>
+            <h2 class="font-header text-4xl text-white mb-2 group-hover:text-yellow-400 transition-colors">Geometry</h2>
+            <p class="text-xs text-slate-400 leading-relaxed">Focus: Area Derivations using the Yellow Material. Transformation logic.</p>
+        </a>
+
+        <!-- GEOGRAPHY ALBUM -->
+        <a href="geography_dynamics.html" class="album-card glass-panel p-8 group">
+            <div class="flex justify-between items-start mb-8">
+                <div class="w-14 h-14 bg-blue-500/20 text-blue-400 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-earth-americas"></i>
+                </div>
+                <span class="status-badge status-active">Active</span>
+            </div>
+            <h2 class="font-header text-4xl text-white mb-2 group-hover:text-blue-400 transition-colors">Geography</h2>
+            <p class="text-xs text-slate-400 leading-relaxed">Focus: The Work of Water & Air. Pressure, Erosion, and Cosmic Laws.</p>
+        </a>
+
+        <!-- BOTANY ALBUM (EXTERNAL/USER FILES) -->
+        <a href="botany_stem.html" class="album-card glass-panel p-8 group">
+            <div class="flex justify-between items-start mb-8">
+                <div class="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-leaf"></i>
+                </div>
+                <span class="status-badge status-external">In Repo</span>
+            </div>
+            <h2 class="font-header text-4xl text-white mb-2 group-hover:text-emerald-400 transition-colors">Botany</h2>
+            <p class="text-xs text-slate-400 leading-relaxed">Using existing dashboard files (Stem, Fruit, Flower, Seed).</p>
+        </a>
+
+        <!-- HUMAN GEOGRAPHY ALBUM -->
+        <a href="economic_geography.html" class="album-card glass-panel p-8 group">
+            <div class="flex justify-between items-start mb-8">
+                <div class="w-14 h-14 bg-rose-500/20 text-rose-400 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-hand-holding-heart"></i>
+                </div>
+                <span class="status-badge status-active">Active</span>
+            </div>
+            <h2 class="font-header text-4xl text-white mb-2 group-hover:text-rose-400 transition-colors">Human Geo</h2>
+            <p class="text-xs text-slate-400 leading-relaxed">Focus: Economic Geography. The Global Bloodstream & Interdependence.</p>
+        </a>
+
+        <!-- LOCKED ALBUMS -->
+        <div class="album-card glass-panel p-8 opacity-40 grayscale pointer-events-none">
+            <div class="flex justify-between items-start mb-8">
+                <div class="w-14 h-14 bg-slate-700/50 text-slate-500 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-language"></i>
+                </div>
+                <span class="status-badge status-locked">Locked</span>
+            </div>
+            <h2 class="font-header text-4xl text-slate-500 mb-2">Language</h2>
+            <p class="text-xs text-slate-600 leading-relaxed">The Story of Communication. Grammar & Syntax Worlds.</p>
         </div>
-    </nav>
 
-    <!-- CONTENT GRID -->
-    <div class="max-w-7xl mx-auto px-6 space-y-20">
-
-        <!-- SECTION: BIOLOGY -->
-        <section id="biology" class="scroll-mt-32">
-            <div class="cat-badge bg-teal-100 text-teal-800">
-                <i class="fa-solid fa-leaf"></i> Biology Album
+        <div class="album-card glass-panel p-8 opacity-40 grayscale pointer-events-none">
+            <div class="flex justify-between items-start mb-8">
+                <div class="w-14 h-14 bg-slate-700/50 text-slate-500 rounded-2xl flex items-center justify-center text-3xl">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <span class="status-badge status-locked">Locked</span>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                
-                <!-- Intro -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Intro</div>
-                    <h3 class="text-lg font-bold text-slate-600">The Coming of Life</h3>
-                    <p class="text-xs text-slate-400 mt-2">The Story • Timeline of Life</p>
-                </div>
+            <h2 class="font-header text-4xl text-slate-500 mb-2">Theory</h2>
+            <p class="text-xs text-slate-600 leading-relaxed">Four Planes of Development. Cosmic Education.</p>
+        </div>
 
-                <!-- Botany: The Plant -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Botany</div>
-                    <h3 class="text-lg font-bold text-slate-600">The Plant</h3>
-                    <p class="text-xs text-slate-400 mt-2">Needs • Vegetative vs. Reproductive</p>
-                </div>
+    </main>
 
-                <!-- Botany: Leaf -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Botany</div>
-                    <h3 class="text-lg font-bold text-slate-600">The Leaf</h3>
-                    <p class="text-xs text-slate-400 mt-2">Photosynthesis • Types • Functions</p>
-                </div>
-
-                <!-- Botany: Root -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Botany</div>
-                    <h3 class="text-lg font-bold text-slate-600">The Root</h3>
-                    <p class="text-xs text-slate-400 mt-2">Anchorage • Water Absorption</p>
-                </div>
-
-                <!-- Botany: Stem (ACTIVE) -->
-                <a href="botany_stem.html" class="module-card active group">
-                    <div class="h-2 bg-teal-500 w-full absolute top-0 left-0"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] font-bold text-teal-600 uppercase">Botany • Active</div>
-                            <i class="fa-solid fa-arrow-right text-teal-500"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-teal-700">The Stem</h3>
-                        <p class="text-sm text-slate-500 mt-2">Xylem, Phloem, and Transport.</p>
-                    </div>
-                </a>
-
-                <!-- Botany: Flower (ACTIVE) -->
-                <a href="botany_flower_dashboard.html" class="module-card active group">
-                    <div class="h-2 bg-teal-500 w-full absolute top-0 left-0"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] font-bold text-teal-600 uppercase">Botany • Active</div>
-                            <i class="fa-solid fa-arrow-right text-teal-500"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-teal-700">The Flower</h3>
-                        <p class="text-sm text-slate-500 mt-2">Function, Parts, & The Pollination Trick.</p>
-                    </div>
-                </a>
-
-                 <!-- Botany: The Seed (ACTIVE) -->
-                 <a href="botany_seed_dashboard.html" class="module-card active group">
-                    <div class="h-2 bg-emerald-500 w-full absolute top-0 left-0"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] font-bold text-emerald-600 uppercase">Botany • Active</div>
-                            <i class="fa-solid fa-arrow-right text-emerald-500"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-emerald-700">The Seed</h3>
-                        <p class="text-sm text-slate-500 mt-2">The Traveler, Monocots, & Dicots.</p>
-                    </div>
-                </a>
-
-                <!-- Botany: Fruit (NEWLY ACTIVE) -->
-                 <a href="botany_fruit_dashboard.html" class="module-card active group">
-                    <div class="h-2 bg-rose-500 w-full absolute top-0 left-0"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] font-bold text-rose-600 uppercase">Botany • New</div>
-                            <i class="fa-solid fa-arrow-right text-rose-500"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-rose-700">The Fruit</h3>
-                        <p class="text-sm text-slate-500 mt-2">Protection, Dispersal & Types.</p>
-                    </div>
-                </a>
-
-                <!-- Zoology -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Zoology</div>
-                    <h3 class="text-lg font-bold text-slate-600">Body Functions</h3>
-                    <p class="text-xs text-slate-400 mt-2">Vital Functions of Animals</p>
-                </div>
-
-                <!-- Classification -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Biology</div>
-                    <h3 class="text-lg font-bold text-slate-600">Classification</h3>
-                    <p class="text-xs text-slate-400 mt-2">Kingdom Vegetalia • Animalia • Linnaeus</p>
-                </div>
-
-                <!-- Ecology -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ecology</div>
-                    <h3 class="text-lg font-bold text-slate-600">Interdependence</h3>
-                    <p class="text-xs text-slate-400 mt-2">Ecosystems • The Cosmic Task</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: GEOGRAPHY -->
-        <section id="geography" class="scroll-mt-32">
-            <div class="cat-badge bg-sky-100 text-sky-800">
-                <i class="fa-solid fa-earth-americas"></i> Geography Album
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                
-                <!-- Creation -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ch 1</div>
-                    <h3 class="text-lg font-bold text-slate-600">Creation of Earth</h3>
-                    <p class="text-xs text-slate-400 mt-2">God with No Hands • Formation</p>
-                </div>
-
-                <!-- Elements -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ch 2</div>
-                    <h3 class="text-lg font-bold text-slate-600">Nature of Elements</h3>
-                    <p class="text-xs text-slate-400 mt-2">States of Matter • Attraction/Gravity</p>
-                </div>
-
-                <!-- Sun & Earth -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ch 3</div>
-                    <h3 class="text-lg font-bold text-slate-600">Sun & Earth</h3>
-                    <p class="text-xs text-slate-400 mt-2">Rotation • Revolution • Seasons • Zones</p>
-                </div>
-
-                <!-- Work of Air (ACTIVE) -->
-                <a href="geography_air.html" class="module-card active group">
-                    <div class="h-2 bg-sky-500 w-full absolute top-0 left-0"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] font-bold text-sky-600 uppercase">Ch 4 • Active</div>
-                            <i class="fa-solid fa-arrow-right text-sky-500"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-sky-700">Work of Air</h3>
-                        <p class="text-sm text-slate-500 mt-2">Winds, Currents, and the Atmosphere.</p>
-                    </div>
-                </a>
-
-                <!-- Work of Water -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ch 5</div>
-                    <h3 class="text-lg font-bold text-slate-600">Work of Water</h3>
-                    <p class="text-xs text-slate-400 mt-2">Rivers • Rain • Ice • Erosion</p>
-                </div>
-
-                <!-- Human Geo -->
-                <div class="module-card locked p-6">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Ch 6</div>
-                    <h3 class="text-lg font-bold text-slate-600">Human Geography</h3>
-                    <p class="text-xs text-slate-400 mt-2">Interdependency • Economic Geo</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: HISTORY -->
-        <section id="history" class="scroll-mt-32">
-            <div class="cat-badge bg-amber-100 text-amber-800">
-                <i class="fa-solid fa-scroll"></i> History Album
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Coming of Humans</h3>
-                    <p class="text-xs text-slate-400 mt-2">Black Strip • Hand Timeline</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Fundamental Needs</h3>
-                    <p class="text-xs text-slate-400 mt-2">Material & Spiritual Needs</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Civilizations</h3>
-                    <p class="text-xs text-slate-400 mt-2">River Civilizations • Migration</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Time Measurement</h3>
-                    <p class="text-xs text-slate-400 mt-2">Clock • Calendar • BC/AD</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: LANGUAGE -->
-        <section id="language" class="scroll-mt-32">
-            <div class="cat-badge bg-rose-100 text-rose-800">
-                <i class="fa-solid fa-pen-nib"></i> Language Album
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">History of Language</h3>
-                    <p class="text-xs text-slate-400 mt-2">Signs • Written • Spoken</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Grammar & Syntax</h3>
-                    <p class="text-xs text-slate-400 mt-2">Word Study • Parts of Speech • Analysis</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Written Expression</h3>
-                    <p class="text-xs text-slate-400 mt-2">Style • Punctuation • Paragraphs</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Literature</h3>
-                    <p class="text-xs text-slate-400 mt-2">Interpretive Reading • Analysis</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: MATH -->
-        <section id="math" class="scroll-mt-32">
-            <div class="cat-badge bg-indigo-100 text-indigo-800">
-                <i class="fa-solid fa-calculator"></i> Math Album
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                
-                <!-- Decimal Multiplication (ACTIVE) -->
-                <a href="math_decimal_multiplication.html" class="module-card active group">
-                    <div class="h-2 bg-indigo-500 w-full absolute top-0 left-0"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] font-bold text-indigo-600 uppercase">Math • Active</div>
-                            <i class="fa-solid fa-arrow-right text-indigo-500"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-indigo-700">Decimal Multiplication</h3>
-                        <p class="text-sm text-slate-500 mt-2">The "Impossible" Problem & The Seesaw Rule.</p>
-                    </div>
-                </a>
-
-                <!-- Decimal Division (ACTIVE - NEW) -->
-                <a href="math_decimal_division.html" class="module-card active group">
-                    <div class="h-2 bg-pink-500 w-full absolute top-0 left-0"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] font-bold text-pink-600 uppercase">Math • Active</div>
-                            <i class="fa-solid fa-arrow-right text-pink-500"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-pink-700">Decimal Division</h3>
-                        <p class="text-sm text-slate-500 mt-2">The Garden Party & Sharing with Guests.</p>
-                    </div>
-                </a>
-
-                <!-- Stamp Game Division (ACTIVE - NEW) -->
-                <a href="math_stamp_division.html" class="module-card active group">
-                    <div class="h-2 bg-amber-600 w-full absolute top-0 left-0"></div>
-                    <div class="p-6">
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="text-[10px] font-bold text-amber-700 uppercase">Math • Active</div>
-                            <i class="fa-solid fa-arrow-right text-amber-600"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800 group-hover:text-amber-800">Stamp Game Division</h3>
-                        <p class="text-sm text-slate-500 mt-2">The Village Market & The Stone Marker.</p>
-                    </div>
-                </a>
-
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Early Work</h3>
-                    <p class="text-xs text-slate-400 mt-2">Multiples • Factors • Bead Frame</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Operations</h3>
-                    <p class="text-xs text-slate-400 mt-2">Long Multiplication • Long Division</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Squares & Cubes</h3>
-                    <p class="text-xs text-slate-400 mt-2">Decanomial • Powers</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Fractions</h3>
-                    <p class="text-xs text-slate-400 mt-2">Common • Decimal • Operations</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Other Topics</h3>
-                    <p class="text-xs text-slate-400 mt-2">Signed Numbers • Algebra • Ratio</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- SECTION: GEOMETRY -->
-        <section id="geometry" class="scroll-mt-32">
-            <div class="cat-badge bg-orange-100 text-orange-800">
-                <i class="fa-solid fa-draw-polygon"></i> Geometry Album
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Congruence</h3>
-                    <p class="text-xs text-slate-400 mt-2">Similarity • Equivalence</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Polygons</h3>
-                    <p class="text-xs text-slate-400 mt-2">Triangles • Quadrilaterals</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Lines & Angles</h3>
-                    <p class="text-xs text-slate-400 mt-2">Measurement • Operations</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Area & Volume</h3>
-                    <p class="text-xs text-slate-400 mt-2">Yellow Material • Solids</p>
-                </div>
-            </div>
-        </section>
-
-         <!-- SECTION: MUSIC -->
-         <section id="music" class="scroll-mt-32">
-            <div class="cat-badge bg-purple-100 text-purple-800">
-                <i class="fa-solid fa-music"></i> Music Album
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Basics</h3>
-                    <p class="text-xs text-slate-400 mt-2">Singing • Listening • Movement</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Theory</h3>
-                    <p class="text-xs text-slate-400 mt-2">Rhythm • Notation</p>
-                </div>
-                <div class="module-card locked p-6">
-                    <h3 class="text-lg font-bold text-slate-600">Tone Bars</h3>
-                    <p class="text-xs text-slate-400 mt-2">Major & Minor Scales</p>
-                </div>
-            </div>
-        </section>
-
-    </div>
-
-    <!-- SCRIPTS -->
-    <script>
-        function toggleEF() {
-            const panel = document.getElementById('ef-panel');
-            panel.classList.toggle('open');
-        }
-
-        function setEnergy(level) {
-            const msg = document.getElementById('energy-msg');
-            const highBtn = document.getElementById('btn-high');
-            const lowBtn = document.getElementById('btn-low');
-
-            if (level === 'high') {
-                msg.textContent = "\"I have time to wander and wonder.\"";
-                highBtn.className = "flex-1 py-2 rounded-lg border border-green-200 bg-green-50 text-green-700 text-xs font-bold hover:bg-green-100";
-                lowBtn.className = "flex-1 py-2 rounded-lg border border-slate-200 text-slate-400 text-xs font-bold hover:bg-slate-50";
-            } else {
-                msg.textContent = "\"Just the facts. Get in, get out.\"";
-                lowBtn.className = "flex-1 py-2 rounded-lg border border-orange-200 bg-orange-50 text-orange-700 text-xs font-bold";
-                highBtn.className = "flex-1 py-2 rounded-lg border border-slate-200 text-slate-400 text-xs font-bold hover:bg-slate-50";
-            }
-        }
-    </script>
+    <footer class="mt-24 text-center border-t border-white/5 pt-12">
+        <p class="text-[10px] text-slate-600 uppercase tracking-[0.5em]">Digital Prepared Environment // Designed for the 2e Brain</p>
+    </footer>
 
 </body>
 </html>
