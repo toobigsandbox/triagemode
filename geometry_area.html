@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Shape-Shifter's Workshop: Area</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bangers&family=Outfit:wght@300;400;700;900&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+        :root {
+            --yellow-material: #fbbf24;
+            --blueprint-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #0f172a;
+            color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        .font-header { font-family: 'Bangers', cursive; letter-spacing: 0.05em; }
+        
+        .blueprint-grid {
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+
+        .shape-btn {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .shape-btn:hover { transform: scale(1.05) rotate(2deg); }
+
+        .slide-panel {
+            transition: transform 0.5s ease-in-out;
+        }
+
+        /* Triage Mode */
+        .triage-mode .discovery-visuals { display: none; }
+        .triage-mode .checklist-only { display: block !important; }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.4); }
+            50% { box-shadow: 0 0 20px 10px rgba(251, 191, 36, 0); }
+        }
+
+        .active-shape {
+            border: 2px solid var(--yellow-material);
+            animation: pulse-gold 2s infinite;
+        }
+    </style>
+</head>
+<body class="blueprint-grid">
+
+    <!-- NAVIGATION -->
+    <nav class="fixed top-0 w-full z-50 p-6 flex justify-between items-center">
+        <button onclick="window.history.back()" class="glass-card px-4 py-2 text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-white/10 transition-colors">
+            <i class="fa-solid fa-arrow-left"></i> Map Room
+        </button>
+        <div class="flex gap-4">
+             <div class="flex bg-slate-800 rounded-full p-1 border border-white/5">
+                <button onclick="document.body.classList.remove('triage-mode')" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all bg-teal-500 text-white">LEARN</button>
+                <button onclick="document.body.classList.add('triage-mode')" class="px-4 py-1.5 rounded-full text-xs font-bold transition-all text-slate-400">TRIAGE</button>
+            </div>
+            <button class="w-10 h-10 rounded-full bg-yellow-500 text-slate-900 flex items-center justify-center shadow-lg shadow-yellow-500/20">
+                <i class="fa-solid fa-brain"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- HERO: THE HOOK -->
+    <header class="min-h-screen flex flex-col justify-center items-center text-center px-4 relative">
+        <div class="discovery-visuals absolute inset-0 -z-10 flex justify-center items-center opacity-20 overflow-hidden">
+            <i class="fa-solid fa-draw-polygon text-[40rem] text-yellow-500 rotate-12"></i>
+        </div>
+        
+        <h1 class="font-header text-7xl md:text-9xl text-white mb-4 uppercase drop-shadow-2xl">Area Logic</h1>
+        <p class="text-xl md:text-2xl text-yellow-400 font-light max-w-2xl">"Every shape is just a rectangle in a clever disguise."</p>
+        
+        <div class="mt-12 flex gap-4">
+            <a href="#discovery" class="bg-yellow-500 text-slate-900 px-8 py-4 rounded-full font-black uppercase tracking-tighter hover:bg-yellow-400 transition-all">Start Dissection</a>
+        </div>
+    </header>
+
+    <!-- DISCOVERY DECK -->
+    <main id="discovery" class="max-w-6xl mx-auto px-4 pb-32">
+        
+        <!-- Checklist Only Mode (Hidden by default) -->
+        <div class="checklist-only hidden glass-card p-12 mb-12 border-l-8 border-yellow-500">
+            <h2 class="font-header text-4xl mb-6">Triage Checklist: Geometry Area</h2>
+            <ul class="space-y-4">
+                <li class="flex items-center gap-4 text-xl"><input type="checkbox" class="w-6 h-6"> Concept of Area (Surface space)</li>
+                <li class="flex items-center gap-4 text-xl"><input type="checkbox" class="w-6 h-6"> Rectangles: Base x Height</li>
+                <li class="flex items-center gap-4 text-xl"><input type="checkbox" class="w-6 h-6"> Parallelograms: The "Cut & Slide"</li>
+                <li class="flex items-center gap-4 text-xl"><input type="checkbox" class="w-6 h-6"> Triangles: The "Half-Rectangle" logic</li>
+                <li class="flex items-center gap-4 text-xl"><input type="checkbox" class="w-6 h-6"> Summary Statement for Album</li>
+            </ul>
+        </div>
+
+        <div class="discovery-visuals grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- LEFT: THE APPARATUS SHED -->
+            <aside class="space-y-6">
+                <div class="glass-card p-6">
+                    <h3 class="font-header text-2xl text-yellow-500 mb-4">The Toolset</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10 flex items-center gap-4 group cursor-help">
+                            <div class="w-12 h-12 bg-yellow-500/20 text-yellow-500 rounded-lg flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-square"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold">The Yellow Material</p>
+                                <p class="text-[10px] text-slate-500">Solid wood/metal shapes with grid lines for counting.</p>
+                            </div>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl border border-white/10 flex items-center gap-4">
+                            <div class="w-12 h-12 bg-slate-700 text-white rounded-lg flex items-center justify-center text-xl">
+                                <i class="fa-solid fa-scissors"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold">Dissection</p>
+                                <p class="text-[10px] text-slate-500">We don't "change" the shape, we re-arrange it.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">The Why (Psychology)</h3>
+                    <div class="p-4 bg-blue-500/10 border-l-2 border-blue-500 rounded-r-xl">
+                        <p class="text-xs text-blue-200 leading-relaxed italic">
+                            "Equivalence is the bridge to Algebra. If a child sees that a Parallelogram is 'equal' to a Rectangle, they aren't memorizing a formula; they are witnessing a transformation."
+                        </p>
+                        <p class="text-[10px] text-blue-400 mt-2 font-bold">— Maria Montessori</p>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- CENTER: THE SIMULATOR -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- Interaction Stage -->
+                <div class="glass-card p-8 h-[500px] relative overflow-hidden flex flex-col justify-center items-center bg-slate-950">
+                    <div id="mechanism-display" class="relative w-64 h-40 bg-yellow-500/30 border-2 border-yellow-500 rounded flex items-center justify-center transition-all duration-700">
+                        <span id="shape-label" class="font-header text-4xl text-yellow-500">RECTANGLE</span>
+                        
+                        <!-- The "Dissection" Line -->
+                        <div id="dissect-line" class="absolute left-1/4 top-0 bottom-0 w-0.5 bg-dashed bg-white/50 opacity-0 transition-opacity"></div>
+                    </div>
+
+                    <div class="absolute bottom-8 flex gap-4">
+                        <button onclick="updateMechanism('rect')" class="shape-btn px-6 py-2 bg-slate-800 rounded-full text-xs font-bold hover:bg-slate-700">1. Rectangle</button>
+                        <button onclick="updateMechanism('para')" class="shape-btn px-6 py-2 bg-slate-800 rounded-full text-xs font-bold hover:bg-slate-700">2. Parallelogram</button>
+                        <button onclick="updateMechanism('tri')" class="shape-btn px-6 py-2 bg-slate-800 rounded-full text-xs font-bold hover:bg-slate-700">3. Triangle</button>
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Script -->
+                <div class="glass-card p-8">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-header text-3xl">The Presentation Script</h3>
+                        <span id="script-step" class="text-xs font-black text-yellow-500 px-3 py-1 bg-yellow-500/10 rounded-full">STEP 01</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">The Script (Voice)</p>
+                            <p id="script-voice" class="text-lg text-white leading-snug">"Look at this rectangle. We call this side the 'Base' and this side the 'Height'."</p>
+                        </div>
+                        <div class="p-4 bg-white/5 rounded-xl">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">The Action (Hands)</p>
+                            <p id="script-action" class="text-sm text-slate-400 italic">Place the yellow rectangle on the table and trace the perimeter with your finger.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- RABBIT HOLE FOOTER -->
+        <section class="mt-24">
+            <h4 class="font-header text-4xl mb-8 text-center">Going Deeper?</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass-card p-6 border-b-4 border-slate-700 hover:border-yellow-500 transition-colors">
+                    <p class="text-xs font-bold uppercase text-slate-500 mb-2">Developmental Link</p>
+                    <p class="text-sm">Why this is for the "Second Plane" child: They love big work and big numbers.</p>
+                </div>
+                <div class="glass-card p-6 border-b-4 border-slate-700 hover:border-teal-500 transition-colors">
+                    <p class="text-xs font-bold uppercase text-slate-500 mb-2">The Math Connection</p>
+                    <p class="text-sm">How this leads to <strong>A = ½(b×h)</strong> without needing a calculator.</p>
+                </div>
+                <div class="glass-card p-6 border-b-4 border-slate-700 hover:border-orange-500 transition-colors">
+                    <p class="text-xs font-bold uppercase text-slate-500 mb-2">Watch Out!</p>
+                    <p class="text-sm">Don't call the slanted side of a parallelogram the 'height'. That's a trap!</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const stages = {
+            rect: {
+                label: "RECTANGLE",
+                voice: "\"Look at this rectangle. We call this side the 'Base' and this side the 'Height'. How many squares are inside?\"",
+                action: "Place the rectangle. Trace the Base, then the Height. Invite the child to count the internal grid.",
+                style: "transform: skewX(0deg); border-radius: 4px; background: rgba(251, 191, 36, 0.4);",
+                step: "STEP 01"
+            },
+            para: {
+                label: "PARALLELOGRAM",
+                voice: "\"This is a parallelogram. It looks like a rectangle that someone pushed over! Can we find its area too?\"",
+                action: "Swap the rectangle for the parallelogram. Cut the small triangle off the left side and slide it to the right.",
+                style: "transform: skewX(-20deg); border-radius: 0; background: rgba(251, 191, 36, 0.6);",
+                step: "STEP 02"
+            },
+            tri: {
+                label: "TRIANGLE",
+                voice: "\"If we cut this rectangle in half diagonally, what do we have? Two equal triangles! So a triangle is half a rectangle.\"",
+                action: "Show a rectangle made of two triangles. Pull them apart to show the formula derivation.",
+                style: "clip-path: polygon(0% 100%, 50% 0%, 100% 100%); background: rgba(251, 191, 36, 0.8);",
+                step: "STEP 03"
+            }
+        };
+
+        function updateMechanism(type) {
+            const data = stages[type];
+            const display = document.getElementById('mechanism-display');
+            const label = document.getElementById('shape-label');
+            const voice = document.getElementById('script-voice');
+            const action = document.getElementById('script-action');
+            const step = document.getElementById('script-step');
+
+            display.style.cssText = data.style;
+            label.innerText = data.label;
+            voice.innerText = data.voice;
+            action.innerText = data.action;
+            step.innerText = data.step;
+        }
+    </script>
+</body>
+</html>
