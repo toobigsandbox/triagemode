@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stamp Game Division: The Village Market</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --parchment: #fdf6e3;
+            --ink: #2c3e50;
+            --wood: #8b5a2b;
+            --stone-gray: #7f8c8d;
+            --stamp-green: #27ae60;
+            --stamp-blue: #2980b9;
+            --stamp-red: #c0392b;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: var(--parchment);
+            background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23d4c5a0' fill-opacity='0.2' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+            color: var(--ink);
+        }
+
+        .serif { font-family: 'Crimson Text', serif; }
+
+        /* --- STAMP GAME PIECES --- */
+        .stamp {
+            width: 36px;
+            height: 36px;
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 0.8rem;
+            color: white;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.15);
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+        .stamp:active { transform: translateY(2px); box-shadow: 0 0 0; }
+        .stamp-green { background-color: var(--stamp-green); }
+        .stamp-blue { background-color: var(--stamp-blue); }
+        .stamp-red { background-color: var(--stamp-red); }
+
+        .skittle-pawn {
+            width: 30px;
+            height: 50px;
+            border-radius: 50% 50% 5px 5px;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            border: 2px solid #1e8449;
+            box-shadow: 4px 4px 5px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .skittle-pawn::before {
+            content: '';
+            position: absolute;
+            top: -15px; left: 5px;
+            width: 20px; height: 20px;
+            border-radius: 50%;
+            background: inherit;
+            border: 2px solid #1e8449;
+        }
+
+        /* --- THE STONE MARKER --- */
+        .river-stone {
+            width: 40px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #95a5a6, #7f8c8d);
+            border-radius: 60% 40% 40% 60% / 50% 50% 50% 50%;
+            box-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+            border: 1px solid #555;
+            cursor: grab;
+            transition: all 0.3s ease;
+            z-index: 50;
+        }
+        .river-stone:hover { transform: scale(1.1); }
+        .river-stone.active { border: 2px solid #f1c40f; box-shadow: 0 0 15px #f1c40f; }
+
+        /* --- LAYOUT CARDS --- */
+        .wood-card {
+            background: #fffbf0;
+            border: 4px solid var(--wood);
+            border-radius: 8px;
+            box-shadow: 5px 5px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        .wood-card::before { /* Nail heads */
+            content: '•'; color: var(--wood); position: absolute; top: 2px; left: 4px; font-size: 1.5rem; line-height: 0;
+        }
+        .wood-card::after { /* Nail heads */
+            content: '•'; color: var(--wood); position: absolute; top: 2px; right: 4px; font-size: 1.5rem; line-height: 0;
+        }
+
+        /* --- NAV BAR --- */
+        .village-nav {
+            background: var(--wood);
+            color: #fdf6e3;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        /* --- SIDEBAR --- */
+        .market-stall {
+            position: fixed;
+            right: 0; top: 0; height: 100vh; width: 320px;
+            background: #fff;
+            border-left: 8px solid var(--stamp-red); /* Awning style */
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            z-index: 100;
+            box-shadow: -10px 0 20px rgba(0,0,0,0.1);
+            padding: 2rem;
+        }
+        .market-stall.open { transform: translateX(0); }
+
+        /* --- ANIMATIONS --- */
+        @keyframes stampDrop {
+            0% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .animate-drop { animation: stampDrop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+
+    </style>
+</head>
+<body class="pb-32">
+
+    <!-- NAV -->
+    <nav class="village-nav fixed top-0 w-full z-50 px-6 py-3 flex justify-between items-center">
+        <div class="flex items-center gap-4">
+            <a href="index.html" class="w-8 h-8 bg-white/20 rounded flex items-center justify-center hover:bg-white/30 transition-colors text-white">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="font-bold text-lg font-serif tracking-wide text-amber-100">Stamp Game Division</h1>
+                <p class="text-[10px] uppercase tracking-widest opacity-80">Lesson 1: The Fair Share</p>
+            </div>
+        </div>
+        <div class="flex gap-4">
+            <button onclick="toggleApparatus()" class="px-3 py-1 bg-amber-700/50 hover:bg-amber-600 rounded text-xs font-bold uppercase border border-amber-500/50 transition-colors">
+                <i class="fa-solid fa-box-open mr-1"></i> The Box
+            </button>
+            <button onclick="toggleEF()" class="text-xl hover:text-amber-300 transition-colors"><i class="fa-solid fa-brain"></i></button>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR (Market Stall) -->
+    <aside id="ef-panel" class="market-stall flex flex-col">
+        <div class="flex justify-between items-center mb-8 border-b-2 border-slate-100 pb-4">
+            <h2 class="text-xl font-bold text-slate-800 font-serif">Guide's Mindset</h2>
+            <button onclick="toggleEF()" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        
+        <div class="space-y-6 flex-grow">
+            <!-- Mode Toggle -->
+            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Lesson Mode</h4>
+                <div class="flex gap-2">
+                    <button onclick="toggleTriage(false)" class="flex-1 py-2 bg-green-100 text-green-800 rounded text-xs font-bold border border-green-200">Storyteller</button>
+                    <button onclick="toggleTriage(true)" class="flex-1 py-2 bg-slate-200 text-slate-600 rounded text-xs font-bold border border-slate-300">Just Facts</button>
+                </div>
+            </div>
+
+            <!-- Parking Lot -->
+            <div class="flex-grow flex flex-col">
+                <h4 class="text-xs font-bold text-slate-400 uppercase mb-2">Mental Storage</h4>
+                <textarea class="flex-grow w-full p-3 bg-yellow-50 border border-yellow-200 rounded text-sm font-serif leading-relaxed resize-none focus:outline-none focus:border-amber-400" placeholder="Park your stray thoughts here..."></textarea>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-5xl mx-auto mt-24 px-6 space-y-16">
+
+        <!-- 1. THE HOOK: THE MARKETPLACE -->
+        <section class="explorer-only">
+            <div class="wood-card p-8 md:p-12 relative overflow-hidden bg-cover bg-center" style="background-image: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.95));">
+                <div class="relative z-10 flex flex-col md:flex-row gap-12 items-center">
+                    <div class="flex-1">
+                        <div class="inline-block px-3 py-1 bg-green-100 text-green-800 border border-green-200 rounded-full text-xs font-bold uppercase tracking-widest mb-4">
+                            The Challenge
+                        </div>
+                        <h2 class="text-5xl font-serif font-bold text-slate-800 mb-6">
+                            4,862 Gold Coins...<br>
+                            <span class="text-emerald-600 italic">for 2 Villages?</span>
+                        </h2>
+                        <p class="text-lg text-slate-600 leading-relaxed font-serif">
+                            "We have a mountain of wealth. We have 2 villages asking for their share. How do we give it to them *fairly*? We must start with the largest treasure first."
+                        </p>
+                    </div>
+                    
+                    <!-- Interactive Visual: The Pile -->
+                    <div class="w-64 h-64 bg-slate-50 border-4 border-double border-slate-200 rounded-full flex items-center justify-center relative shadow-inner">
+                        <div class="absolute inset-0 flex flex-wrap content-center justify-center gap-1 p-8 opacity-50">
+                            <div class="stamp stamp-green transform rotate-12">1k</div>
+                            <div class="stamp stamp-green transform -rotate-6">1k</div>
+                            <div class="stamp stamp-green transform rotate-45">1k</div>
+                            <div class="stamp stamp-red transform rotate-3">100</div>
+                            <div class="stamp stamp-red transform -rotate-12">100</div>
+                            <div class="stamp stamp-blue transform rotate-6">10</div>
+                        </div>
+                        <div class="bg-white px-4 py-2 rounded shadow-lg border border-slate-200 z-10 text-center">
+                            <div class="text-3xl font-black text-slate-800">4,862</div>
+                            <div class="text-[10px] uppercase font-bold text-slate-400">Total Dividend</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. THE SIMULATION: THE STONE'S JOURNEY -->
+        <section class="explorer-only">
+            <div class="flex justify-between items-end mb-6">
+                <h3 class="text-2xl font-serif font-bold text-slate-800 flex items-center gap-3">
+                    <i class="fa-solid fa-scale-balanced text-amber-600"></i> The Fair Share
+                </h3>
+                <div class="text-sm font-bold text-slate-500">Problem: 4862 ÷ 2</div>
+            </div>
+
+            <div class="wood-card p-0 bg-slate-50 overflow-hidden flex flex-col">
+                
+                <!-- TOP: The Place Value Track -->
+                <div class="bg-slate-200 p-4 border-b-2 border-slate-300 flex justify-center gap-8 relative">
+                    <!-- Categories -->
+                    <div class="text-center w-20 opacity-50 transition-opacity" id="track-1000">
+                        <div class="text-xs font-bold text-green-700 uppercase mb-1">Thousands</div>
+                        <div class="w-full h-2 bg-green-500 rounded-full"></div>
+                    </div>
+                    <div class="text-center w-20 opacity-50 transition-opacity" id="track-100">
+                        <div class="text-xs font-bold text-red-700 uppercase mb-1">Hundreds</div>
+                        <div class="w-full h-2 bg-red-500 rounded-full"></div>
+                    </div>
+                    <div class="text-center w-20 opacity-50 transition-opacity" id="track-10">
+                        <div class="text-xs font-bold text-blue-700 uppercase mb-1">Tens</div>
+                        <div class="w-full h-2 bg-blue-500 rounded-full"></div>
+                    </div>
+                    <div class="text-center w-20 opacity-50 transition-opacity" id="track-1">
+                        <div class="text-xs font-bold text-green-700 uppercase mb-1">Units</div>
+                        <div class="w-full h-2 bg-green-500 rounded-full"></div>
+                    </div>
+
+                    <!-- THE STONE (Absolute Positioned) -->
+                    <div id="stone" class="river-stone absolute top-8 left-[calc(50%-140px)]" title="The Marker Stone"></div>
+                </div>
+
+                <!-- MIDDLE: The Distribution Table -->
+                <div class="p-8 min-h-[300px] relative bg-white" id="dist-table">
+                    <!-- Skittles (Divisor) -->
+                    <div class="absolute top-4 left-4 flex gap-4">
+                        <div class="text-center">
+                            <div class="skittle-pawn mx-auto mb-1"></div>
+                            <div class="text-xs font-bold text-green-700">Village A</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="skittle-pawn mx-auto mb-1"></div>
+                            <div class="text-xs font-bold text-green-700">Village B</div>
+                        </div>
+                    </div>
+
+                    <!-- The Action Area -->
+                    <div class="mt-24 grid grid-cols-2 gap-8 text-center" id="stamp-slots">
+                        <!-- Dynamic Stamps go here -->
+                        <div class="border-2 border-dashed border-slate-200 rounded-lg p-4 bg-slate-50 min-h-[100px] flex flex-wrap gap-2 content-start justify-center" id="slot-1"></div>
+                        <div class="border-2 border-dashed border-slate-200 rounded-lg p-4 bg-slate-50 min-h-[100px] flex flex-wrap gap-2 content-start justify-center" id="slot-2"></div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM: Controls -->
+                <div class="p-6 bg-slate-100 border-t border-slate-300 flex flex-col md:flex-row gap-6 items-center">
+                    <div class="flex-1">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase mb-1">Guide's Script</h4>
+                        <p id="guide-script" class="text-lg font-serif text-slate-800 italic">"We always start with the largest category. Who wants to move the stone to the Thousands?"</p>
+                    </div>
+                    <button onclick="nextStep()" class="px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded font-bold shadow-md transition-all active:translate-y-1">
+                        Next Step <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 3. TEACHER'S FIELD NOTES (Reference) -->
+        <section class="explorer-only pt-8 border-t border-slate-300/50" id="field-notes">
+            <h3 class="text-center font-bold text-slate-400 uppercase tracking-widest text-xs mb-8">Guide's Field Notes</h3>
+            
+            <div class="wood-card bg-white p-0">
+                <div class="bg-amber-50 p-6 border-b border-amber-100">
+                    <h2 class="text-2xl font-serif font-bold text-amber-900">Long Division with Stamps</h2>
+                    <p class="text-xs font-bold text-amber-600 uppercase tracking-wider mt-1">Quotative ("Grouping") Division</p>
+                </div>
+                
+                <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Setup -->
+                    <div class="relative pl-6 border-l-2 border-slate-200">
+                        <div class="absolute -left-2 top-0 w-4 h-4 bg-slate-200 rounded-full"></div>
+                        <h4 class="font-bold text-slate-800 mb-2">The Setup</h4>
+                        <ul class="text-sm text-slate-600 space-y-2">
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <strong>Stamp Game:</strong> Full set.</li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <strong>The Stone:</strong> A small, non-hierarchical object (pebble, button) to track place value. <em>Crucial for focus!</em></li>
+                            <li><i class="fa-solid fa-check text-green-500 mr-2"></i> <strong>Paper:</strong> Grid paper to write the problem <em>before</em> starting.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Watch Outs -->
+                    <div class="relative pl-6 border-l-2 border-red-200">
+                        <div class="absolute -left-2 top-0 w-4 h-4 bg-red-200 rounded-full"></div>
+                        <h4 class="font-bold text-red-800 mb-2">Watch Out!</h4>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            <strong>Zeroes:</strong> The skittles are place holders. If you have a zero in the divisor, use a place marker (like the colored disks) to hold the spot, even if no stamps go there initially.
+                        </p>
+                    </div>
+
+                    <!-- Calibration -->
+                    <div class="md:col-span-2 bg-slate-50 p-4 rounded border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-2 text-sm uppercase tracking-wide">Pedagogy: "Calibration"</h4>
+                        <p class="text-sm text-slate-600 font-serif italic">
+                            "Use 1-digit divisors first. Not to bore them, but to 'calibrate' their understanding. Can they exchange? Do they know where to write the answer? Once confirmed, move quickly to multi-digit division."
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TRIAGE MODE (Hidden by default) -->
+        <section class="triage-banner hidden space-y-4">
+            <div class="bg-white border-l-4 border-amber-500 p-6 shadow-sm rounded-r">
+                <h3 class="font-bold text-slate-800 text-lg mb-2">Lesson Snapshot</h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                    <li><strong>Goal:</strong> Reinforce regrouping/exchange in division.</li>
+                    <li><strong>Key Tool:</strong> The Stone Marker (tracks the active category).</li>
+                    <li><strong>Process:</strong> Share Thousands -> Exchange remainder -> Share Hundreds -> etc.</li>
+                    <li><strong>Answer:</strong> The quantity under ONE skittle (Unit).</li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- APPARATUS MODAL (The Box) -->
+    <div id="apparatus-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden items-center justify-center p-4">
+        <div class="wood-card bg-white w-full max-w-2xl p-8 relative">
+            <button onclick="toggleApparatus()" class="absolute top-4 right-4 text-2xl hover:text-amber-600 transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="text-3xl font-serif font-bold text-slate-800 mb-6">The Stamp Game Box</h2>
+            
+            <div class="grid grid-cols-2 gap-8">
+                <!-- Stamps -->
+                <div class="text-center">
+                    <div class="flex justify-center gap-2 mb-4">
+                        <div class="stamp stamp-green shadow-lg">1k</div>
+                        <div class="stamp stamp-red shadow-lg">100</div>
+                        <div class="stamp stamp-blue shadow-lg">10</div>
+                        <div class="stamp stamp-green shadow-lg">1</div>
+                    </div>
+                    <p class="text-sm text-slate-600 italic">"Abstract representations of the beads. The quantity is now written, not felt by weight."</p>
+                </div>
+                <!-- Skittles -->
+                <div class="text-center border-l border-slate-200 pl-8">
+                    <div class="flex justify-center gap-2 mb-4">
+                        <div class="skittle-pawn"></div>
+                        <div class="skittle-pawn bg-blue-500"></div>
+                        <div class="skittle-pawn bg-red-500"></div>
+                    </div>
+                    <p class="text-sm text-slate-600 italic">"The Divisors. The ones receiving the share."</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // EF Logic
+        function toggleEF() { document.getElementById('ef-panel').classList.toggle('open'); }
+        function toggleApparatus() { document.getElementById('apparatus-modal').classList.remove('hidden'); document.getElementById('apparatus-modal').classList.add('flex'); }
+        function toggleTriage(enable) {
+            const body = document.body;
+            const expl = document.querySelectorAll('.explorer-only');
+            const tri = document.querySelector('.triage-banner');
+            
+            if(enable) {
+                body.style.backgroundColor = '#fff';
+                body.style.backgroundImage = 'none';
+                expl.forEach(el => el.classList.add('hidden'));
+                tri.classList.remove('hidden');
+            } else {
+                body.style.backgroundImage = 'url("data:image/svg+xml,%3Csvg width=\'40\' height=\'40\' viewBox=\'0 0 40 40\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'%23d4c5a0\' fill-opacity=\'0.2\' fill-rule=\'evenodd\'%3E%3Cpath d=\'M0 40L40 0H20L0 20M40 40V20L20 40\'/%3E%3C/g%3E%3C/svg%3E")';
+                expl.forEach(el => el.classList.remove('hidden'));
+                tri.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('apparatus-modal').addEventListener('click', function(e) {
+            if(e.target === this) {
+                this.classList.add('hidden');
+                this.classList.remove('flex');
+            }
+        });
+
+        // SIMULATION LOGIC
+        const steps = [
+            {
+                script: "First, we place the Stone on the Thousands. We have 4 Thousands. Can we share them?",
+                trackId: 'track-1000',
+                stonePos: 'calc(50% - 140px)', // Approx position
+                stamps: [
+                    `<div class="stamp stamp-green animate-drop">1k</div>`, 
+                    `<div class="stamp stamp-green animate-drop">1k</div>`
+                ]
+            },
+            {
+                script: "Yes! Each village gets 2 Thousands. (2 x 2 = 4). We have used them all.",
+                trackId: 'track-1000',
+                stonePos: 'calc(50% - 140px)',
+                stamps: [
+                    `<div class="stamp stamp-green">1k</div><div class="stamp stamp-green">1k</div>`, 
+                    `<div class="stamp stamp-green">1k</div><div class="stamp stamp-green">1k</div>`
+                ]
+            },
+            {
+                script: "Now, move the Stone to the Hundreds. We have 8 Hundreds. Let's share.",
+                trackId: 'track-100',
+                stonePos: 'calc(50% - 50px)',
+                stamps: [
+                    `<div class="stamp stamp-green">1k</div><div class="stamp stamp-green">1k</div><div class="stamp stamp-red animate-drop">100</div><div class="stamp stamp-red animate-drop">100</div><div class="stamp stamp-red animate-drop">100</div><div class="stamp stamp-red animate-drop">100</div>`, 
+                    `<div class="stamp stamp-green">1k</div><div class="stamp stamp-green">1k</div><div class="stamp stamp-red animate-drop">100</div><div class="stamp stamp-red animate-drop">100</div><div class="stamp stamp-red animate-drop">100</div><div class="stamp stamp-red animate-drop">100</div>`
+                ]
+            },
+            {
+                script: "Perfect. 4 Hundreds each. Move the stone to the Tens. We have 6 Tens.",
+                trackId: 'track-10',
+                stonePos: 'calc(50% + 40px)',
+                stamps: [
+                    // Keeping previous stamps + adding blues
+                    `<div class="stamp stamp-green">1k</div><div class="stamp stamp-green">1k</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-blue animate-drop">10</div><div class="stamp stamp-blue animate-drop">10</div><div class="stamp stamp-blue animate-drop">10</div>`, 
+                    `<div class="stamp stamp-green">1k</div><div class="stamp stamp-green">1k</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-blue animate-drop">10</div><div class="stamp stamp-blue animate-drop">10</div><div class="stamp stamp-blue animate-drop">10</div>`
+                ]
+            },
+            {
+                script: "Finally, the Units. Move the stone. 2 Units left. 1 for you, 1 for you.",
+                trackId: 'track-1',
+                stonePos: 'calc(50% + 130px)',
+                stamps: [
+                    // Full set
+                    `<div class="stamp stamp-green">1k</div><div class="stamp stamp-green">1k</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-blue">10</div><div class="stamp stamp-blue">10</div><div class="stamp stamp-blue">10</div><div class="stamp stamp-green animate-drop">1</div>`, 
+                    `<div class="stamp stamp-green">1k</div><div class="stamp stamp-green">1k</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-red">100</div><div class="stamp stamp-blue">10</div><div class="stamp stamp-blue">10</div><div class="stamp stamp-blue">10</div><div class="stamp stamp-green animate-drop">1</div>`
+                ]
+            }
+        ];
+
+        let currentStep = 0;
+
+        function updateSim() {
+            const data = steps[currentStep];
+            
+            // Move Stone
+            document.getElementById('stone').style.left = data.stonePos;
+            
+            // Highlight Track
+            ['track-1000', 'track-100', 'track-10', 'track-1'].forEach(id => {
+                document.getElementById(id).style.opacity = '0.5';
+                document.getElementById(id).classList.remove('scale-110');
+            });
+            document.getElementById(data.trackId).style.opacity = '1';
+            document.getElementById(data.trackId).classList.add('scale-110');
+
+            // Update Script
+            document.getElementById('guide-script').innerText = data.script;
+
+            // Update Stamps
+            document.getElementById('slot-1').innerHTML = data.stamps[0];
+            document.getElementById('slot-2').innerHTML = data.stamps[1];
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateSim();
+            }
+        }
+
+        // Init
+        updateSim();
+
+    </script>
+</body>
+</html>
